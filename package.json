@@ -1,0 +1,36 @@
+{
+  "name": "ella-rises-115",
+  "version": "1.0.0",
+  "description": "Full-stack Node/Express application for the Ella Rises INTEX 2025 project.",
+  "keywords": [
+    "express",
+    "intex"
+  ],
+  "homepage": "https://github.com/phoenixfisher/ella-rises-115#readme",
+  "bugs": {
+    "url": "https://github.com/phoenixfisher/ella-rises-115/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phoenixfisher/ella-rises-115.git"
+  },
+  "license": "MIT",
+  "author": "Team 1-15",
+  "type": "commonjs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
