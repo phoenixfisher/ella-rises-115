@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/header") %>
+</head>
+
+<body>
+    <!-- Navbar: dynamic based on role -->
+    <% if (!user) { %>
+        <%- include("partials/navbar_visitor") %>
+    <% } else if (user.role === "M") { %>
+        <%- include("partials/navbar_admin") %>
+    <% } else { %>
+        <%- include("partials/navbar_user") %>
+    <% } %>
+
+    <main class="content">
+
+        <!-- Flash messages -->
+        <% if (messages && messages.length > 0) { %>
+            <div class="flash-messages">
+                <% messages.forEach(msg => { %>
+                    <p class="flash"><%= msg %></p>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <!-- Page content -->
+        <%- body %>
+    </main>
+
+    <%- include("partials/footer") %>
+</body>
+</html>
