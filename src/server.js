@@ -18,6 +18,10 @@ const knex = require("knex")({
         password: process.env.PG_PASSWORD,
         database: process.env.PG_DATABASE,
         port: process.env.PG_PORT,
+
+        ssl: {
+            rejectUnauthorized: false
+        }
     }
 });
 
@@ -140,6 +144,7 @@ app.post("/create-account", (req, res) => {
     
     if (!username || !password) {
         return res.status(400).render("auth/create-account", { 
+            layout: false,
             error_message: "Username and password are required.",
             user: null
         });
@@ -160,11 +165,13 @@ app.post("/create-account", (req, res) => {
             console.error("Error inserting user:", dbErr.message);
             if (dbErr.code === '23505') {
                  return res.status(400).render("auth/create-account", { 
+                    layout: false,
                     error_message: "Username is already taken.",
                     user: null
                 });
             }
             res.status(500).render("auth/create-account", { 
+                layout: false,
                 error_message: "Unable to save user. Please try again.",
                 user: null
             });

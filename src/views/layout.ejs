@@ -8,7 +8,7 @@
     <!-- Navbar: dynamic based on role -->
     <% if (!user) { %>
         <%- include("partials/navbar_visitor") %>
-    <% } else if (user.role === "M") { %>
+    <% } else if (user.level === "M") { %>
         <%- include("partials/navbar_admin") %>
     <% } else { %>
         <%- include("partials/navbar_user") %>
