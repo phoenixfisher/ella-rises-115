@@ -60,12 +60,12 @@ app.use((req, res, next) => {
 
 // Default route → login page
 app.get("/", (req, res) => {
-    res.render("auth/login", { error_message: "" });
+    res.render("auth/login", {layout: false, error_message: ""});
 });
 
 // Optional login route (same page)
 app.get("/login", (req, res) => {
-    res.render("auth/login", { error_message: "" });
+    res.render("auth/login",  {layout: false, error_message: ""});
 });
 
 // Public landing page
