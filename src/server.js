@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 require("dotenv").config();
 const path = require("path");
@@ -24,6 +25,8 @@ const knex = require("knex")({
 // VIEW ENGINE + STATIC FILES
 // =========================
 app.set("view engine", "ejs");
+app.use(expressLayouts);
+app.set("layout", "layout");
 
 // This points Express to: src/views
 app.set("views", path.join(__dirname, "views"));
@@ -42,6 +45,13 @@ app.use(
         saveUninitialized: false,
     })
 );
+
+// Expose common template locals
+app.use((req, res, next) => {
+    res.locals.user = req.session?.user || null;
+    res.locals.title = "Ella Rises";
+    next();
+});
 
 // =========================
 // LOGIN ROUTES
@@ -117,5 +127,4 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
-
 
