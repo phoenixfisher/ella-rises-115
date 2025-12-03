@@ -60,16 +60,17 @@ app.use((req, res, next) => {
 
 // Global authentication middleware
 app.use((req, res, next) => {
-    // Skip authentication for login routes
-    if (req.path === '/' || req.path === '/login' || req.path === '/logout') {
-        //continue with the request path
+    res.locals.user = req.session.user;
+    const openPaths = ['/', '/login', '/logout', '/create-account'];
+
+    if (openPaths.includes(req.path)) {
         return next();
     }
+    
     if (req.session.isLoggedIn) {
         next();
-    } 
-    else {
-        res.render("login", { error_message: "Please log in to access this page" });
+    } else {
+        res.redirect('/login'); 
     }
 });
 
@@ -154,8 +155,6 @@ app.get("/create-account", (req, res) => {
 });
 
 // Handles form submission from creating an account
-
-// These names for some of these variables probably need to be changed to match whatever it is going to be in the actual db
 app.post("/create-account", (req, res) => {
     const { username, password } = req.body;
     const level = "U";
@@ -220,6 +219,155 @@ app.get("/users", (req, res) => {
   else {
     res.render("auth/login", { error_message: "" });
   }
+});
+
+// Routes for adding a user
+app.get("/addUser", (req, res) => {
+    res.render("addUser");
+});
+
+// Handle form submission for adding a user
+app.post("/addUser", (req, res) => {
+    const { username, password, level } = req.body;
+    if (!username || !password) {
+        return res.status(400).render("addUser", { error_message: "Username and password are required." });
+    }
+    const newUser = {
+        username,
+        password,
+        level
+    };
+    knex("users")
+        .insert(newUser)
+        .then(() => {
+            res.redirect("/users");
+        })
+        .catch((dbErr) => {
+            console.error("Error inserting user:", dbErr.message);
+            res.status(500).render("addUser", { error_message: "Unable to save user. Please try again." });
+        });
+});
+
+
+// Handle form submission for deleting a user
+app.post("/deleteUser/:id", (req, res) => {
+    
+    knex("users").where("id", req.params.id).del().then(users => {
+        res.redirect("/users");
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json({err});
+    })
+});
+
+
+// Routes for editing a user
+app.get("/editUser/:id", (req, res) => {
+    const id = req.params.id;
+
+    knex("users")
+    .where({ id: id })
+    .first()
+    .then((user) => {
+        if (!user) {
+            return res.status(404).render("displayUsers", {
+                users: [],
+                userLevel: req.session.user.level,
+                error_message: "User not found."
+            });
+        }
+
+        res.render("editUser", { user, error_message: "" });
+    })
+    .catch((err) => {
+        console.error("Database query error:", err.message);
+        res.status(500).render("displayUsers", {
+            users: [],
+            userLevel: req.session.user.level,
+            error_message: `Database error: ${err.message}.`
+        });
+    });
+
+});
+
+
+// Handle form submission for editing a user
+app.post("/editUser/:id", (req, res) => {
+    const id = req.params.id;
+    const { username, password, level } = req.body;
+
+    if (!username || !password) {
+        return knex("users")
+            .where({ id: id })
+            .first()
+            .then((user) => {
+                if (!user) {
+                    return res.status(404).render("displayUsers", {
+                        users: [],
+                        userLevel: req.session.user.level,
+                        error_message: "User not found."
+                    });
+                }
+                res.status(400).render("editUser", {
+                    user,
+                    error_message: "Username and password are required."
+                });
+            })
+            .catch((err) => {
+                console.error("Error fetching user:", err.message);
+                res.status(500).render("displayUsers", {
+                    users: [],
+                    userLevel: req.session.user.level,
+                    error_message: "Unable to load user for editing."
+                });
+            });
+    }
+    const updatedUser = {
+        username,
+        password,
+        level
+    };
+    
+    knex("users")
+        .where({ id: id })
+        .update(updatedUser)
+        .then((rowsUpdated) => {
+            if (rowsUpdated === 0) {
+                return res.status(404).render("displayUsers", {
+                    users: [],
+                    userLevel: req.session.user.level,
+                    error_message: "User not found."
+                });
+            }
+            res.redirect("/users");
+        })
+        .catch((err) => {
+            console.error("Error updating user:", err.message);
+            knex("users")
+                .where({ id: id })
+                .first()
+                .then((user) => {
+                    if (!user) {
+                        return res.status(404).render("displayUsers", {
+                            users: [],
+                            userLevel: req.session.user.level,
+                            error_message: "User not found."
+                        });
+                    }
+                    res.status(500).render("editUser", {
+                        user,
+                        error_message: "Unable to update user. Please try again."
+                    });
+                })
+                .catch((fetchErr) => {
+                    console.error("Error fetching user after update failure:", fetchErr.message);
+                    res.status(500).render("displayUsers", {
+                        users: [],
+                        userLevel: req.session.user.level,
+                        error_message: "Unable to update user."
+                    });
+                });
+        });
 });
 
 
