@@ -58,9 +58,9 @@ app.use((req, res, next) => {
 // LOGIN ROUTES
 // =========================
 
-// Default route → login page
+// Default route → landing page
 app.get("/", (req, res) => {
-    res.render("auth/login", {layout: false, error_message: ""});
+    res.render("landing", {error_message: ""});
 });
 
 // Optional login route (same page)
