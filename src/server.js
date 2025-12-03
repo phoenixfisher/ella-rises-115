@@ -88,6 +88,7 @@ app.post("/login", async (req, res) => {
 
         if (!user) {
             return res.render("auth/login", {
+                layout: false,
                 error_message: "Invalid username or password.",
             });
         }
@@ -126,7 +127,7 @@ app.get("/dashboard", (req, res) => {
 // =========================
 app.get("/logout", (req, res) => {
     req.session.destroy(() => {
-        res.redirect("/login");
+        res.redirect("/landing");
     });
 });
 
