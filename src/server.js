@@ -107,7 +107,7 @@ app.get("/", (req, res) => {
 
 // Optional login route (same page)
 app.get("/login", (req, res) => {
-    res.render("auth/login",  {layout: false, error_message: ""});
+    res.render("auth/login");
 });
 
 // Alias for registration route
