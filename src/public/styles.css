@@ -1,0 +1,162 @@
+
+/* ---------- COLOR VARIABLES ---------- */
+:root {
+    --blue-soft:     #99B7C6;
+    --lavender:      #978EC4;
+    --cream:         #F9F5EA;
+    --pink-light:    #FFD8D1;
+    --pink-mid:      #F9AFB1;
+    --green-soft:    #9AB59D;
+    --charcoal:      #3A3F3B;
+    --coral:         #F4B092;
+    --rose-deep:     #CE325B;
+
+    /* Common neutrals */
+    --white: #FFFFFF;
+    --black: #000000;
+
+    /* Shadows + borders */
+    --shadow-light: rgba(0,0,0,0.08);
+    --shadow-mid: rgba(0,0,0,0.15);
+}
+
+/* ---------- GLOBAL TYPOGRAPHY ---------- */
+body {
+    font-family: "Montserrat", sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* Headings using DM Serif Display */
+h1, h2, h3 {
+    font-family: "DM Serif Display", serif;
+    color: var(--charcoal);
+}
+
+/* Script option for accent text */
+.script-text {
+    font-family: "TT Milk Script", cursive;
+    color: var(--rose-deep);
+}
+
+/* ---------- BUTTON STYLES ---------- */
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.25s ease;
+}
+
+/* Color variants */
+.btn-pink      { background: var(--pink-mid); color: var(--white); }
+.btn-green     { background: var(--green-soft); color: var(--white); }
+.btn-charcoal  { background: var(--charcoal); color: var(--white); }
+.btn-rose      { background: var(--rose-deep); color: var(--white); }
+
+/* Hover effects */
+.btn:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 8px var(--shadow-light);
+}
+
+/* ---------- CARD COMPONENT ---------- */
+.card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px var(--shadow-light);
+    border: 1px solid var(--pink-light);
+}
+
+/* ---------- NAVBAR ---------- */
+.navbar {
+    background: var(--charcoal);
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar a {
+    color: var(--cream);
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 20px;
+}
+
+.navbar a:hover {
+    color: var(--pink-light);
+}
+
+/* ---------- FORMS ---------- */
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--pink-light);
+    border-radius: 8px;
+    background: var(--white);
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--green-soft);
+    box-shadow: 0 0 6px var(--green-soft);
+}
+
+/* ---------- UTILITY CLASSES ---------- */
+.text-center { text-align: center; }
+.text-rose   { color: var(--rose-deep); }
+.text-green  { color: var(--green-soft); }
+.text-pink   { color: var(--pink-mid); }
+
+.bg-rose     { background: var(--rose-deep); }
+.bg-pink     { background: var(--pink-mid); }
+.bg-green    { background: var(--green-soft); }
+.bg-charcoal { background: var(--charcoal); }
+
+/* Spacing */
+.mt-1 { margin-top: 10px; }
+.mt-2 { margin-top: 20px; }
+.mt-3 { margin-top: 30px; }
+
+.mb-1 { margin-bottom: 10px; }
+.mb-2 { margin-bottom: 20px; }
+.mb-3 { margin-bottom: 30px; }
+
+/* ---------- LOGO MARK STYLE (HEART) ---------- */
+.ella-heart {
+    color: var(--rose-deep);
+    font-size: 2.4rem;
+}
+
+/* Centers the login box */
+.form-container {
+    max-width: 380px;
+    margin: 50px auto;
+    padding: 25px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    border: 1px solid var(--pink-light);
+}
+
+/* Override default input width so they don't stretch across entire page */
+.form-control {
+    width: 90% !important;
+    margin: 0 auto 15px auto;
+    display: block;
+}
+
+/* Buttons nicely centered */
+.form-button {
+    width: 90%;
+    margin: 15px auto 0 auto;
+    display: block;
+}
