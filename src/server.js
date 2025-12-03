@@ -126,6 +126,51 @@ app.get("/logout", (req, res) => {
     });
 });
 
+// Route for getting the create account view
+app.get("/create-account", (req, res) => {
+    res.render("auth/create_account", { layout: false, error_message: "" });
+});
+
+// Handles form submission from creating an account
+
+// These names for some of these variables probably need to be changed to match whatever it is going to be in the actual db
+app.post("/create-account", (req, res) => {
+    const { username, password } = req.body;
+    const level = "U";
+    
+    if (!username || !password) {
+        return res.status(400).render("auth/create-account", { 
+            error_message: "Username and password are required.",
+            user: null
+        });
+    }
+
+    const newUser = {
+        username,
+        password,
+        level
+    };
+
+    knex("users")
+        .insert(newUser)
+        .then(() => {
+            res.redirect("/login");
+        })
+        .catch((dbErr) => {
+            console.error("Error inserting user:", dbErr.message);
+            if (dbErr.code === '23505') {
+                 return res.status(400).render("auth/create-account", { 
+                    error_message: "Username is already taken.",
+                    user: null
+                });
+            }
+            res.status(500).render("auth/create-account", { 
+                error_message: "Unable to save user. Please try again.",
+                user: null
+            });
+        });
+});
+
 // =========================
 // START SERVER
 // =========================
