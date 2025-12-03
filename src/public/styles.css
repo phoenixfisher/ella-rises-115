@@ -1,96 +1,280 @@
 :root {
-        --blue-soft:     #99B7C6;
-        --lavender:      #978EC4;
-        --cream:         #F9F5EA;
-        --pink-light:    #FFD8D1;
-        --pink-mid:      #F9AFB1;
-        --green-soft:    #9AB59D;
-        --charcoal:      #3A3F3B;
-        --coral:         #F4B092;
-        --rose-deep:     #CE325B;
+    --blue-soft:     #99B7C6;
+    --lavender:      #978EC4;
+    --cream:         #F9F5EA;
+    --pink-light:    #FFD8D1;
+    --pink-mid:      #F9AFB1;
+    --green-soft:    #9AB59D;
+    --charcoal:      #3A3F3B;
+    --coral:         #F4B092;
+    --rose-deep:     #CE325B;
+    --white: #FFFFFF;
+}
 
-        --white: #FFFFFF;
+/* ================================
+   GLOBAL PAGE LAYOUT (Sticky Footer + Navbar)
+================================ */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    background: var(--cream);
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;               /* navbar still spans the top */
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--white);
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px;
+
+    display: flex;
+    justify-content: flex-end;  /* moves all links to the right */
+    gap: 20px;                  /* spacing between links */
+}
+
+/* Push page content down so it isn't under navbar */
+.content {
+    flex: 1;
+    padding-top: 70px; 
+}
+
+/* Footer sticks to bottom */
+footer {
+    background-color: #f4f4f4;
+    border-top: 1px solid #ccc;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+/* ================================
+   LOGIN PAGE ONLY
+================================ */
+.login-container {
+    width: 360px;
+    background: linear-gradient(135deg, var(--cream), var(--pink-light));
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    border: 1px solid var(--pink-light);
+    text-align: center;
+    margin: auto; /* centers inside flex layout */
+    margin-top: 100px; /* clears navbar */
+}
+
+.login-container h1 {
+    color: var(--charcoal);
+    margin-bottom: 1.5rem;
+    font-family: "DM Serif Display", serif;
+}
+
+/* ================================
+   FORM ELEMENTS
+================================ */
+label {
+    display: block;
+    text-align: left;
+    margin: 0.6rem 0 0.2rem;
+    color: var(--charcoal);
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--pink-light);
+    border-radius: 8px;
+    background: var(--white);
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+input:focus {
+    border-color: var(--lavender);
+    outline: none;
+    box-shadow: 0 0 6px rgba(151,142,196,0.3);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 1.2rem;
+    background: var(--rose-deep);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.25s ease;
+}
+
+button:hover {
+    background: #b52a4f;
+}
+
+.error {
+    color: var(--rose-deep);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* ================================
+   LINKS
+================================ */
+a {
+    color: var(--lavender);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+a:hover {
+    color: var(--rose-deep);
+}
+
+/* ================================
+   LANDING PAGE
+================================ */
+.landing {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+}
+
+.landing-hero {
+    background: linear-gradient(135deg, var(--cream), var(--pink-light));
+    border: 1px solid var(--pink-light);
+    border-radius: 18px;
+    box-shadow: 0 10px 26px var(--shadow-light);
+    padding: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    align-items: center;
+}
+
+.hero-copy h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.4rem;
+}
+
+.hero-copy p {
+    margin: 0 0 18px 0;
+    color: var(--charcoal);
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--rose-deep);
+    color: var(--white);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.stat {
+    background: var(--white);
+    border: 1px solid var(--pink-light);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 0 4px 10px var(--shadow-light);
+}
+
+.stat strong {
+    display: block;
+    font-size: 1.4rem;
+    color: var(--rose-deep);
+}
+
+.hero-panel {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--pink-light);
+    box-shadow: inset 0 0 0 1px rgba(255, 216, 209, 0.6), 0 8px 18px var(--shadow-light);
+    padding: 28px;
+}
+
+.hero-panel ul {
+    padding-left: 18px;
+    margin: 0;
+    color: var(--charcoal);
+    line-height: 1.6;
+}
+
+.pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin: 30px 0;
+}
+
+.pillar-grid .card h3 {
+    margin-top: 0;
+}
+
+.cta-strip {
+    background: linear-gradient(135deg, var(--pink-mid), var(--rose-deep));
+    color: var(--white);
+    padding: 28px;
+    border-radius: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 12px 26px var(--shadow-mid);
+}
+
+.cta-strip h2 {
+    margin: 0;
+    color: var(--white);
+}
+
+.cta-strip p {
+    margin: 6px 0 0 0;
+}
+
+.cta-strip .hero-actions {
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .landing {
+        padding: 24px 14px 40px;
     }
 
-    body {
-        background: var(--cream);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 85vh;
-        margin: 0;
+    .landing-hero {
+        padding: 28px 20px;
     }
 
-    .login-container {
-        width: 360px;
-        background: var(--white);
-        padding: 2rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-        border: 1px solid var(--pink-light);
-        text-align: center;
+    .hero-copy h1 {
+        font-size: 2rem;
     }
-
-    .login-container h1 {
-        color: var(--charcoal);
-        margin-bottom: 1.5rem;
-        font-family: "DM Serif Display", serif;
-    }
-
-    label {
-        display: block;
-        text-align: left;
-        margin: 0.6rem 0 0.2rem;
-        color: var(--charcoal);
-        font-weight: 600;
-    }
-
-    input {
-        width: 100%;
-        padding: 10px;
-        border: 2px solid var(--pink-light);
-        border-radius: 8px;
-        background: var(--white);
-        font-size: 1rem;
-        transition: border-color 0.2s ease;
-    }
-
-    input:focus {
-        border-color: var(--lavender);
-        outline: none;
-        box-shadow: 0 0 6px rgba(151,142,196,0.3);
-    }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        margin-top: 1.2rem;
-        background: var(--rose-deep);
-        color: var(--white);
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        font-weight: 600;
-        transition: background 0.25s ease;
-    }
-
-    button:hover {
-        background: #b52a4f;
-    }
-
-    .error {
-        color: var(--rose-deep);
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-
-    a {
-        color: var(--lavender);
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    a:hover {
-        color: var(--rose-deep);
-    }
+}
