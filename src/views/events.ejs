@@ -1,0 +1,114 @@
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Events</h1>
+        <!-- Only show Add button if user is logged in AND is a Manager ('M') -->
+        <% if (user && user.level === 'M') { %>
+            <a href="/addEvent" class="btn btn-success">
+                Create New Event
+            </a>
+        <% } %>
+    </div>
+
+    <!-- LOGIC: Split events into two arrays -->
+    <% 
+        const currentDate = new Date();
+        // Filter events where start time is greater than or equal to now
+        const upcomingEvents = events.filter(e => new Date(e.eventdatetimestart) >= currentDate);
+        // Filter events where start time is less than now
+        const pastEvents = events.filter(e => new Date(e.eventdatetimestart) < currentDate);
+    %>
+
+    <!-- UPCOMING EVENTS SECTION -->
+    <h3 class="border-bottom pb-2 mb-3 text-primary">Upcoming Events</h3>
+    
+    <% if (upcomingEvents.length === 0) { %>
+        <div class="alert alert-info mb-5">No upcoming events found.</div>
+    <% } else { %>
+        <div class="row mb-5">
+            <% upcomingEvents.forEach(event => { %>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= event.eventname %></h5>
+                            <h6 class="card-subtitle mb-2 text-muted"><%= event.eventtype %></h6>
+                            
+                            <p class="card-text">
+                                <%= event.eventdescription.substring(0, 100) %>...
+                            </p>
+
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item">
+                                    <strong>Start:</strong> 
+                                    <%= new Date(event.eventdatetimestart).toLocaleString() %>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Location:</strong> <%= event.eventlocation %>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Recurrence:</strong> <%= event.eventrecurrencepattern %>
+                                </li>
+                            </ul>
+
+                            <!-- Buttons only visible to Managers -->
+                            <% if (user && user.level === 'M') { %>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="/editEvent/<%= event.eventid %>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    
+                                    <form action="/deleteEvent/<%= event.eventid %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+
+    <!-- PAST EVENTS SECTION -->
+    <h3 class="border-bottom pb-2 mb-3 text-secondary">Past Events</h3>
+
+    <% if (pastEvents.length === 0) { %>
+        <div class="alert alert-light text-muted">No past events found.</div>
+    <% } else { %>
+        <div class="row">
+            <% pastEvents.forEach(event => { %>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm bg-light text-muted">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= event.eventname %></h5>
+                            <h6 class="card-subtitle mb-2"><%= event.eventtype %></h6>
+                            
+                            <p class="card-text small">
+                                <%= event.eventdescription.substring(0, 80) %>...
+                            </p>
+
+                            <ul class="list-group list-group-flush mb-3 bg-light">
+                                <li class="list-group-item bg-light">
+                                    <strong>Date:</strong> 
+                                    <%= new Date(event.eventdatetimestart).toLocaleDateString() %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                    <strong>Location:</strong> <%= event.eventlocation %>
+                                </li>
+                            </ul>
+
+                            <!-- Buttons only visible to Managers -->
+                            <% if (user && user.level === 'M') { %>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="/editEvent/<%= event.eventid %>" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                    
+                                    <form action="/deleteEvent/<%= event.eventid %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this past event?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+</div>

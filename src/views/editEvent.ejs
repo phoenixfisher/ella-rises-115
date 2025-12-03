@@ -1,0 +1,93 @@
+<!-- DATE HELPER: Converts Database Date Object to "YYYY-MM-DDTHH:MM" string -->
+<% 
+    function formatForInput(dateObj) {
+        if (!dateObj) return '';
+        const d = new Date(dateObj);
+        // This is a quick hack to keep the local time offset correct for the input
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().slice(0, 16);
+    }
+%>
+
+<div class="container mt-5" style="max-width: 800px;">
+    <h2 class="mb-4">Edit Event: <%= event.eventname %></h2>
+
+    <form action="/editEvent/<%= event.eventid %>" method="POST">
+        
+        <!-- SECTION 1: General Event Info -->
+        <h4 class="text-primary border-bottom pb-2 mb-3">General Information</h4>
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Event Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="<%= event.eventname %>" required>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="type" class="form-label">Event Type</label>
+                <select class="form-select" id="type" name="type">
+                    <!-- Check existing value to set 'selected' -->
+                    <option value="Workshop" <%= event.eventtype === 'Workshop' ? 'selected' : '' %>>Workshop</option>
+                    <option value="Social" <%= event.eventtype === 'Social' ? 'selected' : '' %>>Social</option>
+                    <option value="Fundraiser" <%= event.eventtype === 'Fundraiser' ? 'selected' : '' %>>Fundraiser</option>
+                    <option value="Meeting" <%= event.eventtype === 'Meeting' ? 'selected' : '' %>>Meeting</option>
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="recurrence" class="form-label">Recurrence Pattern</label>
+                <select class="form-select" id="recurrence" name="recurrence">
+                    <option value="None" <%= event.eventrecurrencepattern === 'None' ? 'selected' : '' %>>None (One-time)</option>
+                    <option value="Weekly" <%= event.eventrecurrencepattern === 'Weekly' ? 'selected' : '' %>>Weekly</option>
+                    <option value="Monthly" <%= event.eventrecurrencepattern === 'Monthly' ? 'selected' : '' %>>Monthly</option>
+                    <option value="Annually" <%= event.eventrecurrencepattern === 'Annually' ? 'selected' : '' %>>Annually</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3"><%= event.eventdescription %></textarea>
+        </div>
+
+        <!-- SECTION 2: Schedule & Logistics -->
+        <h4 class="text-primary border-bottom pb-2 mb-3 mt-4">Schedule & Logistics</h4>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="startTime" class="form-label">Start Date & Time</label>
+                <!-- Use the helper function to set the value -->
+                <input type="datetime-local" class="form-control" id="startTime" name="startTime" 
+                       value="<%= formatForInput(event.eventdatetimestart) %>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="endTime" class="form-label">End Date & Time</label>
+                <input type="datetime-local" class="form-control" id="endTime" name="endTime" 
+                       value="<%= formatForInput(event.eventdatetimeend) %>" required>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location" value="<%= event.eventlocation %>" required>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="capacity" class="form-label">Max Capacity</label>
+                <input type="number" class="form-control" id="capacity" name="capacity" 
+                       value="<%= event.eventdefaultcapacity %>">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="deadline" class="form-label">Registration Deadline</label>
+                <input type="datetime-local" class="form-control" id="deadline" name="deadline"
+                       value="<%= formatForInput(event.eventregistrationdeadline) %>">
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <a href="/events" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+
+    </form>
+</div>

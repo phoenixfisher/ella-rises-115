@@ -406,6 +406,190 @@ app.post("/editUser/:id", (req, res) => {
         });
 });
 
+// Route for viewing events
+app.get("/events", async (req, res) => {
+    try {
+        const eventList = await knex("events")
+            .join("eventoccurrences", "events.eventid", "=", "eventoccurrences.eventid")
+            .select(
+                "events.eventid",
+                "events.eventname",
+                "events.eventtype",
+                "events.eventdescription",
+                "events.eventrecurrencepattern",
+                "eventoccurrences.eventdatetimestart",
+                "eventoccurrences.eventdatetimeend",
+                "eventoccurrences.eventlocation"
+            )
+            .orderBy("eventoccurrences.eventdatetimestart", "asc"); // Show soonest events first
+
+        res.render("events", { 
+            events: eventList,
+            user: req.session.user // Passing user for the layout
+        });
+
+    } catch (err) {
+        console.error("Error fetching events:", err);
+        res.status(500).send("Error loading events");
+    }
+});
+
+app.get("/addEvent", (req, res) => {
+    // Check if user is logged in/admin if needed
+    if (!req.session.user) {
+        return res.redirect("/login");
+    }
+
+    res.render("addEvent", {
+        user: req.session.user
+    });
+});
+
+app.get("/editEvent/:id", async (req, res) => {
+    const targetId = req.params.id;
+
+    try {
+        // We use .first() because we expect only one result
+        const eventToEdit = await knex("events")
+            .join("eventoccurrences", "events.eventid", "=", "eventoccurrences.eventid")
+            .where("events.eventid", targetId)
+            .select(
+                "events.eventid",
+                "events.eventname",
+                "events.eventtype",
+                "events.eventdescription",
+                "events.eventrecurrencepattern",
+                "events.eventdefaultcapacity",
+                "eventoccurrences.eventdatetimestart",
+                "eventoccurrences.eventdatetimeend",
+                "eventoccurrences.eventlocation",
+                "eventoccurrences.eventregistrationdeadline",
+                "eventoccurrences.eventcapacity"
+            )
+            .first();
+
+        // Safety check: Did we actually find an event?
+        if (!eventToEdit) {
+            return res.status(404).send("Event not found");
+        }
+
+        res.render("editEvent", {
+            event: eventToEdit,
+            user: req.session.user
+        });
+
+    } catch (err) {
+        console.error("Error fetching event for edit:", err);
+        res.status(500).send("Error loading edit page");
+    }
+});
+
+app.post('/addEvent', async (req, res) => {
+    // Destructure your form inputs
+    const { 
+        name, type, description, recurrence, capacity, // For 'events' table
+        startTime, endTime, location, deadline        // For 'eventoccurrences' table
+    } = req.body;
+
+    try {
+        await knex.transaction(async (trx) => {
+            
+            // Step 1: Insert into 'events'
+            const [newEvent] = await trx('events')
+                .insert({
+                    eventname: name,
+                    eventtype: type,
+                    eventdescription: description,
+                    eventrecurrencepattern: recurrence || 'None', // Default if empty
+                    eventdefaultcapacity: parseInt(capacity)
+                })
+                .returning('eventid'); // ⚠️ CRITICAL: Must match the PK column name
+
+            // Step 2: Insert into 'eventoccurrences' using the new ID
+            await trx('eventoccurrences').insert({
+                eventid: newEvent.eventid, // Link to the parent
+                eventdatetimestart: startTime,
+                eventdatetimeend: endTime,
+                eventlocation: location,
+                eventcapacity: parseInt(capacity), // Setting specific capacity to match default
+                eventregistrationdeadline: deadline
+            });
+        });
+
+        res.redirect('/events');
+
+    } catch (err) {
+        console.error("Error adding event:", err);
+        res.status(500).send("Failed to add event");
+    }
+});
+
+app.post('/editEvent/:id', async (req, res) => {
+    const targetEventId = req.params.id;
+    const { 
+        name, type, description, recurrence, capacity, 
+        startTime, endTime, location, deadline 
+    } = req.body;
+
+    try {
+        await knex.transaction(async (trx) => {
+            
+            // Step 1: Update the Parent (events)
+            await trx('events')
+                .where({ eventid: targetEventId }) // Match PK
+                .update({
+                    eventname: name,
+                    eventtype: type,
+                    eventdescription: description,
+                    eventrecurrencepattern: recurrence,
+                    eventdefaultcapacity: parseInt(capacity)
+                });
+
+            // Step 2: Update the Child (eventoccurrences)
+            // Note: This updates ALL occurrences for this event ID. 
+            await trx('eventoccurrences')
+                .where({ eventid: targetEventId }) // Match FK
+                .update({
+                    eventdatetimestart: startTime,
+                    eventdatetimeend: endTime,
+                    eventlocation: location,
+                    eventcapacity: parseInt(capacity),
+                    eventregistrationdeadline: deadline
+                });
+        });
+
+        res.redirect('/events');//
+
+    } catch (err) {
+        console.error("Error editing event:", err);
+        res.status(500).send("Failed to update event");
+    }
+});
+
+app.post('/deleteEvent/:id', async (req, res) => {
+    const targetEventId = req.params.id;
+
+    try {
+        await knex.transaction(async (trx) => {
+            
+            // Step 1: Delete from 'eventoccurrences' first
+            await trx('eventoccurrences')
+                .where({ eventid: targetEventId })
+                .del();
+
+            // Step 2: Delete from 'events' second
+            await trx('events')
+                .where({ eventid: targetEventId })
+                .del();
+        });
+
+        res.redirect('/events');
+
+    } catch (err) {
+        console.error("Error deleting event:", err);
+        res.status(500).send("Failed to delete event");
+    }
+});
 
 // =========================
 // START SERVER
