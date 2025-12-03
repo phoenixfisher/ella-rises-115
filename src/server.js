@@ -50,6 +50,7 @@ app.use(
 app.use((req, res, next) => {
     res.locals.user = req.session?.user || null;
     res.locals.title = "Ella Rises";
+    res.locals.messages = [];
     next();
 });
 
@@ -65,6 +66,11 @@ app.get("/", (req, res) => {
 // Optional login route (same page)
 app.get("/login", (req, res) => {
     res.render("auth/login", { error_message: "" });
+});
+
+// Public landing page
+app.get("/landing", (req, res) => {
+    res.render("landing");
 });
 
 // Process login form
@@ -89,7 +95,7 @@ app.post("/login", async (req, res) => {
             level: user.level,
         };
 
-        res.redirect("/dashboard");
+        res.redirect("/landing");
     } catch (err) {
         console.error(err);
         res.send("Login error");
@@ -127,4 +133,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
-
