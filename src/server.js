@@ -128,7 +128,7 @@ app.get("/logout", (req, res) => {
 
 // Route for getting the create account view
 app.get("/create-account", (req, res) => {
-    res.render("auth/create_account", { layout: false, error_message: "" });
+    res.render("auth/create-account", { layout: false, error_message: "" });
 });
 
 // Handles form submission from creating an account
