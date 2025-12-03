@@ -1,0 +1,60 @@
+<div class="container mt-5">
+    <h1 class="mb-4">Users List</h1>
+    <br>
+    
+    <% if (userLevel === 'M') { %>
+        <form action="/addUser" method="GET">
+            <button type="submit" class="btn btn-success">Add User</button>
+        </form>
+    <% } %>
+
+    <% if (typeof error_message !== 'undefined' && error_message) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= error_message %>
+        </div>
+    <% } %>
+
+    <% if (users.length === 0) { %>
+        <div class="alert alert-warning" role="alert">
+            No users found in the database.
+        </div>
+    <% } else { %>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th> <th>Level</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let iCount = 0; iCount < users.length; iCount++) { %>
+                    <tr>
+                        <td><%= users[iCount].username %></td>
+                        <td><%= users[iCount].password %></td>
+                        <td>
+                            <% if (users[iCount].level === 'M') { %>
+                                <span>Manager</span>
+                            <% } else { %>
+                                <span>User</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <form action="/editUser/<%= users[iCount].id %>" method="get">
+                                <input type="submit" name="Edit" value="Edit" class="btn btn-sm btn-warning" />
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/deleteUser/<%= users[iCount].id %>" method="post" onsubmit="return confirm('Are you sure you want to delete <%= users[iCount].username %>?');">
+                                <input type="submit" name="Delete" value="Delete" class="btn btn-sm btn-danger" />
+                            </form>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    <% } %>
+
+    <a href="/" class="btn btn-primary mt-3">Back to Landing Page</a>
+</div>

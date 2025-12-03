@@ -58,6 +58,21 @@ app.use((req, res, next) => {
     next();
 });
 
+// Global authentication middleware
+app.use((req, res, next) => {
+    // Skip authentication for login routes
+    if (req.path === '/' || req.path === '/login' || req.path === '/logout') {
+        //continue with the request path
+        return next();
+    }
+    if (req.session.isLoggedIn) {
+        next();
+    } 
+    else {
+        res.render("login", { error_message: "Please log in to access this page" });
+    }
+});
+
 // =========================
 // LOGIN ROUTES
 // =========================
@@ -99,6 +114,8 @@ app.post("/login", async (req, res) => {
             username: user.username,
             level: user.level,
         };
+
+        req.session.isLoggedIn = true;
 
         res.redirect("/landing");
     } catch (err) {
@@ -178,6 +195,33 @@ app.post("/create-account", (req, res) => {
             });
         });
 });
+
+// Route for viewing all users (people with login accounts in the users table)
+app.get("/users", (req, res) => {
+  if (req.session.isLoggedIn) {
+    knex.select('username', 'password', 'level', 'id') 
+        .from("users")
+        .then(users => {
+            console.log(`Successfully retrieved ${users.length} users from database`);
+            res.render("displayUsers", {
+                users: users,
+                userLevel: req.session.user.level,
+                user: req.session.user
+            });
+        })
+        .catch((err) => {
+            console.error("Database query error:", err.message);
+            res.render("displayUsers", {
+                users: [],
+                error_message: `Database error: ${err.message}`
+            });
+        });
+  }
+  else {
+    res.render("auth/login", { error_message: "" });
+  }
+});
+
 
 // =========================
 // START SERVER
