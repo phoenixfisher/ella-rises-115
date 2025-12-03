@@ -2,10 +2,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
+const helmet = require("helmet");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 const path = require("path");
 
 const app = express();
+const SESSION_SECRET = process.env.SESSION_SECRET || "dev-session-secret-change-me";
 
 // =========================
 // INIT KNEX (PostgreSQL)
@@ -38,15 +41,23 @@ app.set("views", path.join(__dirname, "views"));
 // This serves static files from: src/public
 app.use(express.static(path.join(__dirname, "public")));
 
+// Basic security headers
+app.use(helmet({ contentSecurityPolicy: false }));
+
 // Parse form POST data
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Sessions
 app.use(
     session({
-        secret: "supersecret123",
+        secret: SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+        },
     })
 );
 
@@ -58,20 +69,32 @@ app.use((req, res, next) => {
     next();
 });
 
-// Global authentication middleware
-app.use((req, res, next) => {
-    // Skip authentication for login routes
-    if (req.path === '/' || req.path === '/login' || req.path === '/logout') {
-        //continue with the request path
-        return next();
+// =========================
+// AUTH HELPERS
+// =========================
+const requireAuth = (req, res, next) => {
+    if (!req.session.user) {
+        return res.redirect("/login");
     }
-    if (req.session.isLoggedIn) {
+    next();
+};
+
+// Require specific user level(s); manager = "M", user = "U"
+const requireRole = (levels) => {
+    const allowed = Array.isArray(levels) ? levels : [levels];
+    return (req, res, next) => {
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+        if (!allowed.includes(req.session.user.level)) {
+            return res.status(403).render("auth/login", {
+                layout: false,
+                error_message: "You are not authorized to view that page.",
+            });
+        }
         next();
-    } 
-    else {
-        res.render("login", { error_message: "Please log in to access this page" });
-    }
-});
+    };
+};
 
 // =========================
 // LOGIN ROUTES
@@ -87,6 +110,11 @@ app.get("/login", (req, res) => {
     res.render("auth/login",  {layout: false, error_message: ""});
 });
 
+// Alias for registration route
+app.get("/register", (req, res) => {
+    res.redirect("/create-account");
+});
+
 // Public landing page
 app.get("/landing", (req, res) => {
     res.render("landing");
@@ -97,11 +125,29 @@ app.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const user = await knex("users")
-            .where({ username, password })
-            .first();
+        const user = await knex("users").where({ username }).first();
 
         if (!user) {
+            return res.render("auth/login", {
+                layout: false,
+                error_message: "Invalid username or password.",
+            });
+        }
+
+        let isValidPassword = false;
+
+        // If password is already hashed, use bcrypt. Otherwise, support legacy plain text and re-hash.
+        if (user.password && user.password.startsWith("$2")) {
+            isValidPassword = await bcrypt.compare(password, user.password);
+        } else {
+            isValidPassword = user.password === password;
+            if (isValidPassword) {
+                const newHash = await bcrypt.hash(password, 10);
+                await knex("users").where({ id: user.id }).update({ password: newHash });
+            }
+        }
+
+        if (!isValidPassword) {
             return res.render("auth/login", {
                 layout: false,
                 error_message: "Invalid username or password.",
@@ -115,8 +161,6 @@ app.post("/login", async (req, res) => {
             level: user.level,
         };
 
-        req.session.isLoggedIn = true;
-
         res.redirect("/landing");
     } catch (err) {
         console.error(err);
@@ -127,11 +171,7 @@ app.post("/login", async (req, res) => {
 // =========================
 // PROTECTED ROUTES EXAMPLE
 // =========================
-app.get("/dashboard", (req, res) => {
-    if (!req.session.user) {
-        return res.redirect("/login");
-    }
-
+app.get("/dashboard", requireAuth, (req, res) => {
     // You can render a dashboard.ejs, or keep this placeholder
     res.render("index", {
         username: req.session.user.username,
@@ -156,7 +196,7 @@ app.get("/create-account", (req, res) => {
 // Handles form submission from creating an account
 
 // These names for some of these variables probably need to be changed to match whatever it is going to be in the actual db
-app.post("/create-account", (req, res) => {
+app.post("/create-account", async (req, res) => {
     const { username, password } = req.body;
     const level = "U";
     
@@ -168,37 +208,37 @@ app.post("/create-account", (req, res) => {
         });
     }
 
-    const newUser = {
-        username,
-        password,
-        level
-    };
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    knex("users")
-        .insert(newUser)
-        .then(() => {
-            res.redirect("/login");
-        })
-        .catch((dbErr) => {
-            console.error("Error inserting user:", dbErr.message);
-            if (dbErr.code === '23505') {
-                 return res.status(400).render("auth/create-account", { 
-                    layout: false,
-                    error_message: "Username is already taken.",
-                    user: null
-                });
-            }
-            res.status(500).render("auth/create-account", { 
+        const newUser = {
+            username,
+            password: hashedPassword,
+            level
+        };
+
+        await knex("users").insert(newUser);
+
+        res.redirect("/login");
+    } catch (dbErr) {
+        console.error("Error inserting user:", dbErr.message);
+        if (dbErr.code === '23505') {
+             return res.status(400).render("auth/create-account", { 
                 layout: false,
-                error_message: "Unable to save user. Please try again.",
+                error_message: "Username is already taken.",
                 user: null
             });
+        }
+        res.status(500).render("auth/create-account", { 
+            layout: false,
+            error_message: "Unable to save user. Please try again.",
+            user: null
         });
+    }
 });
 
 // Route for viewing all users (people with login accounts in the users table)
-app.get("/users", (req, res) => {
-  if (req.session.isLoggedIn) {
+app.get("/users", requireRole(["M"]), (req, res) => {
     knex.select('username', 'password', 'level', 'id') 
         .from("users")
         .then(users => {
@@ -216,10 +256,6 @@ app.get("/users", (req, res) => {
                 error_message: `Database error: ${err.message}`
             });
         });
-  }
-  else {
-    res.render("auth/login", { error_message: "" });
-  }
 });
 
 
