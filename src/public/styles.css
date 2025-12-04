@@ -30,19 +30,64 @@ nav {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100%;             /* Ensures full width */
     z-index: 1000;
+    
     background-color: var(--white);
-    border-bottom: 1px solid #ddd;
-
-    padding: 10px 20px;
-
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* Adds depth instead of a border */
+    
+    /* Layout */
     display: flex;
     align-items: center;
-    gap: 20px;
+    justify-content: space-between; /* Pushes Brand to left, Links to right */
+    
+    padding: 10px 40px;      /* Horizontal spacing */
+    box-sizing: border-box;  /* Ensures padding doesn't break width */
+}
 
-    max-width: 1225px;
-    margin: 0 auto;
+/* Remove the old nav a:first-child rule if it exists */
+
+/* Logo and Brand Name */
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--rose-deep);
+    font-family: "DM Serif Display", serif; /* Matches your headers */
+    font-size: 1.5rem;
+}
+
+.nav-brand img {
+    height: 45px; /* Adjust size as needed */
+    width: auto;
+    border-radius: 50%;
+}
+
+.nav-brand:hover {
+    color: var(--charcoal); /* Subtle hover effect */
+}
+
+/* Container for the links on the right */
+.nav-links {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+/* Styling for the individual links */
+.nav-links a {
+    color: var(--charcoal);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: var(--rose-deep);
 }
 
 .brand {
