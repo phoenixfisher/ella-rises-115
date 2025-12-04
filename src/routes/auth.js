@@ -33,10 +33,8 @@ router.post("/login", async (req, res) => {
         const user = await db("users").where({ username }).first();
 
         if (!user) {
-            return res.render("auth/login", {
-                layout: false,
-                error_message: "Invalid username or password.",
-            });
+            req.flash("error", "Invalid username or password.");
+            return res.redirect("/login");
         }
 
         let isValidPassword = false;
@@ -53,10 +51,8 @@ router.post("/login", async (req, res) => {
         }
 
         if (!isValidPassword) {
-            return res.render("auth/login", {
-                layout: false,
-                error_message: "Invalid username or password.",
-            });
+            req.flash("error", "Invalid username or password.");
+            return res.redirect("/login");
         }
 
         // Save user in session
@@ -124,17 +120,11 @@ router.post("/create-account", async (req, res) => {
     } catch (dbErr) {
         console.error("Error inserting user:", dbErr.message);
         if (dbErr.code === "23505") {
-            return res.status(400).render("auth/create-account", {
-                layout: false,
-                error_message: "Username is already taken.",
-                user: null,
-            });
+            req.flash("error", "Username is already taken.");
+            return res.redirect("/create-account");
         }
-        res.status(500).render("auth/create-account", {
-            layout: false,
-            error_message: "Unable to save user. Please try again.",
-            user: null,
-        });
+        req.flash("error", "Unable to save user. Please try again.");
+        res.redirect("/create-account");
     }
 });
 

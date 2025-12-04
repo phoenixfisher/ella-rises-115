@@ -93,10 +93,8 @@ router.post("/addParticipant", requireRole(["M"]), (req, res) => {
     } = req.body;
 
     if (!participantfirstname || !participantlastname || !participantemail) {
-        return res.status(400).render("participants/addParticipant", {
-            userLevel: req.session.user.level,
-            error_message: "First Name, Last Name, and Email are required.",
-        });
+        req.flash("error", "First Name, Last Name, and Email are required.");
+        return res.redirect("/addParticipant");
     }
 
     db("participants")
@@ -114,14 +112,13 @@ router.post("/addParticipant", requireRole(["M"]), (req, res) => {
             participantfieldofinterest,
         })
         .then(() => {
+            req.flash("success", "Participant added.");
             res.redirect("/participants");
         })
         .catch((err) => {
             console.error("Error adding participant:", err.message);
-            res.status(500).render("participants/addParticipant", {
-                userLevel: req.session.user.level,
-                error_message: "Unable to add participant. Please try again.",
-            });
+            req.flash("error", "Unable to add participant. Please try again.");
+            res.redirect("/addParticipant");
         });
 });
 
@@ -182,11 +179,13 @@ router.post("/editParticipant/:id", requireRole(["M"]), (req, res) => {
             participantfieldofinterest,
         })
         .then(() => {
+            req.flash("success", "Participant updated.");
             res.redirect("/participants");
         })
         .catch((err) => {
             console.error("Error updating participant:", err.message);
-            res.status(500).send("Error updating participant");
+            req.flash("error", "Error updating participant.");
+            res.redirect(`/editParticipant/${participantid}`);
         });
 });
 
@@ -196,10 +195,12 @@ router.post("/deleteParticipant/:id", requireRole(["M"]), (req, res) => {
         .where("participantid", req.params.id)
         .del()
         .then(() => {
+            req.flash("success", "Participant deleted.");
             res.redirect("/participants");
         })
         .catch((err) => {
             console.log(err);
+            req.flash("error", "Unable to delete participant.");
             res.status(500).json({ err });
         });
 });

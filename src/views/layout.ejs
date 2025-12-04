@@ -5,22 +5,33 @@
 </head>
 
 <body>
-    <!-- Navbar: dynamic based on role -->
-    <% if (!user) { %>
-        <%- include("partials/navbar_visitor") %>
-    <% } else if (user.level === "M") { %>
-        <%- include("partials/navbar_admin") %>
-    <% } else { %>
-        <%- include("partials/navbar_user") %>
-    <% } %>
+    <!-- Navbar -->
+    <nav>
+        <!-- Brand logo -->
+        <%- include("partials/brand") %>
+        
+        <!-- Navbar links -->
+        <% if (!user) { %>
+            <%- include("partials/navbar_visitor") %>
+        <% } else if (user.level === "M") { %>
+            <%- include("partials/navbar_admin") %>
+        <% } else { %>
+            <%- include("partials/navbar_user") %>
+        <% } %>
+    </nav>
 
     <main class="content">
 
         <!-- Flash messages -->
-        <% if (messages && messages.length > 0) { %>
-            <div class="flash-messages">
-                <% messages.forEach(msg => { %>
-                    <p class="flash"><%= msg %></p>
+        <% if (messages && Object.keys(messages).length > 0) { %>
+            <div class="flash-container" aria-live="polite">
+                <% Object.keys(messages).forEach(type => { %>
+                    <% messages[type].forEach(msg => { %>
+                        <div class="flash <%= type %>">
+                            <span class="flash-content"><%= msg %></span>
+                            <button type="button" class="flash-close" aria-label="Close message">×</button>
+                        </div>
+                    <% }) %>
                 <% }) %>
             </div>
         <% } %>
@@ -30,5 +41,24 @@
     </main>
 
     <%- include("partials/footer") %>
+
+    <script>
+        (function() {
+            const flashes = document.querySelectorAll('.flash');
+            flashes.forEach(flash => {
+                const closer = flash.querySelector('.flash-close');
+                if (closer) {
+                    closer.addEventListener('click', () => {
+                        flash.classList.add('fade');
+                        setTimeout(() => flash.remove(), 200);
+                    });
+                }
+                setTimeout(() => {
+                    flash.classList.add('fade');
+                    setTimeout(() => flash.remove(), 200);
+                }, 5000);
+            });
+        })();
+    </script>
 </body>
 </html>

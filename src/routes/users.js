@@ -36,9 +36,8 @@ router.post("/addUser", requireRole(["M"]), async (req, res) => {
     const { username, password, level } = req.body;
 
     if (!username || !password) {
-        return res
-            .status(400)
-            .render("users/addUser", { error_message: "Username and password are required." });
+        req.flash("error", "Username and password are required.");
+        return res.redirect("/addUser");
     }
 
     try {
@@ -52,12 +51,12 @@ router.post("/addUser", requireRole(["M"]), async (req, res) => {
         };
 
         await db("users").insert(newUser);
+        req.flash("success", "User created.");
         res.redirect("/users");
     } catch (dbErr) {
         console.error("Error inserting user:", dbErr.message);
-        res
-            .status(500)
-            .render("users/addUser", { error_message: "Unable to save user. Please try again." });
+        req.flash("error", "Unable to save user. Please try again.");
+        res.redirect("/addUser");
     }
 });
 
@@ -67,10 +66,12 @@ router.post("/deleteUser/:id", requireRole(["M"]), (req, res) => {
         .where("id", req.params.id)
         .del()
         .then(() => {
+            req.flash("success", "User deleted.");
             res.redirect("/users");
         })
         .catch((err) => {
             console.log(err);
+            req.flash("error", "Unable to delete user.");
             res.status(500).json({ err });
         });
 });
@@ -147,35 +148,25 @@ router.post("/editUser/:id", requireRole(["M"]), async (req, res) => {
         const rowsUpdated = await db("users").where({ id: id }).update(updatedUser);
 
         if (rowsUpdated === 0) {
-            return res.status(404).render("users/displayUsers", {
-                users: [],
-                userLevel: req.session.user.level,
-                error_message: "User not found.",
-            });
+            req.flash("error", "User not found.");
+            return res.redirect("/users");
         }
+        req.flash("success", "User updated.");
         res.redirect("/users");
     } catch (err) {
         console.error("Error updating user:", err.message);
         try {
             const user = await db("users").where({ id: id }).first();
             if (!user) {
-                return res.status(404).render("users/displayUsers", {
-                    users: [],
-                    userLevel: req.session.user.level,
-                    error_message: "User not found.",
-                });
+                req.flash("error", "User not found.");
+                return res.redirect("/users");
             }
-            res.status(500).render("users/editUser", {
-                user,
-                error_message: "Unable to update user. Please try again.",
-            });
+            req.flash("error", "Unable to update user. Please try again.");
+            res.redirect(`/editUser/${id}`);
         } catch (fetchErr) {
             console.error("Error fetching user after failure:", fetchErr.message);
-            res.status(500).render("users/displayUsers", {
-                users: [],
-                userLevel: req.session.user.level,
-                error_message: "Unable to update user.",
-            });
+            req.flash("error", "Unable to update user.");
+            res.redirect("/users");
         }
     }
 });

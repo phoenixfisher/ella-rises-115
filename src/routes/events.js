@@ -106,7 +106,8 @@ router.post("/addEvent", requireAuth, async (req, res) => {
         res.redirect("/events");
     } catch (err) {
         console.error("Error adding event:", err);
-        res.status(500).send("Failed to add event");
+        req.flash("error", "Failed to add event.");
+        res.redirect("/addEvent");
     }
 });
 
@@ -139,10 +140,12 @@ router.post("/editEvent/:id", requireAuth, async (req, res) => {
                 });
         });
 
+        req.flash("success", "Event updated.");
         res.redirect("/events");
     } catch (err) {
         console.error("Error editing event:", err);
-        res.status(500).send("Failed to update event");
+        req.flash("error", "Failed to update event.");
+        res.redirect(`/editEvent/${targetEventId}`);
     }
 });
 
@@ -156,9 +159,11 @@ router.post("/deleteEvent/:id", requireAuth, async (req, res) => {
             await trx("events").where({ eventid: targetEventId }).del();
         });
 
+        req.flash("success", "Event deleted.");
         res.redirect("/events");
     } catch (err) {
         console.error("Error deleting event:", err);
+        req.flash("error", "Failed to delete event.");
         res.status(500).send("Failed to delete event");
     }
 });

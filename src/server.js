@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const expressLayouts = require("express-ejs-layouts");
 const helmet = require("helmet");
+const flash = require("connect-flash");
 const path = require("path");
 
 const { sessionMiddleware } = require("./config/session");
@@ -17,6 +18,7 @@ const eventRoutes = require("./routes/events");
 const donationRoutes = require("./routes/donations");
 const pageRoutes = require("./routes/pages");
 
+// Initialize express object as the app
 const app = express();
 
 // View engine + static
@@ -32,12 +34,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Sessions
 app.use(sessionMiddleware);
+app.use(flash());
 
 // Template locals
 app.use((req, res, next) => {
     res.locals.user = req.session?.user || null;
     res.locals.title = "Ella Rises";
-    res.locals.messages = [];
+    res.locals.messages = req.flash();
     next();
 });
 

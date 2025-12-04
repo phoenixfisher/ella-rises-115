@@ -34,9 +34,11 @@ router.get("/deleteDonation/:donationid", async (req, res) => {
 
     try {
         await db("donations").where("donationid", donationid).del();
+        req.flash("success", "Donation deleted.");
         res.redirect("/donations");
     } catch (err) {
         console.error(err);
+        req.flash("error", "Error deleting donation.");
         res.send("Error deleting donation");
     }
 });
@@ -75,10 +77,12 @@ router.post("/editDonation/:donationid", async (req, res) => {
                 donationamount,
             });
 
+        req.flash("success", "Donation updated.");
         res.redirect("/donations");
     } catch (err) {
         console.error(err);
-        res.send("Error updating donation");
+        req.flash("error", "Error updating donation.");
+        res.redirect(`/editDonation/${donationid}`);
     }
 });
 
@@ -114,10 +118,12 @@ router.post("/addDonation", async (req, res) => {
             donationamount,
         });
 
+        req.flash("success", "Donation added.");
         res.redirect("/donations");
     } catch (err) {
         console.error(err);
-        res.send("Error adding donation");
+        req.flash("error", "Error adding donation.");
+        res.redirect("/addDonation");
     }
 });
 
