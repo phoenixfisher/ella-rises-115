@@ -1,0 +1,83 @@
+<div class="landing">
+    <div class="hero-panel" style="max-width: 800px; margin: 0 auto;">
+        
+        <!-- Header Section -->
+        <div style="border-bottom: 2px solid var(--pink-light); padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="color: var(--charcoal); margin: 0;">
+                <%= participant.participantfirstname %> <%= participant.participantlastname %>
+            </h2>
+            <span style="background-color: var(--pink-light); color: var(--rose-deep); padding: 5px 12px; border-radius: 15px; font-size: 0.9rem; font-weight: bold;">
+                <%= participant.participantrole %>
+            </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            
+            <!-- Column 1: Contact & Personal -->
+            <div>
+                <h4 style="color: var(--rose-deep); margin-bottom: 1rem; font-size: 1.1rem;">Contact Information</h4>
+                
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="display: block; color: #666; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Email</label>
+                    <div style="font-size: 1.1rem; color: var(--charcoal);"><%= participant.participantemail %></div>
+                </div>
+
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="display: block; color: #666; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Phone</label>
+                    <div style="font-size: 1.1rem; color: var(--charcoal);"><%= participant.participantphone %></div>
+                </div>
+
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="display: block; color: #666; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Date of Birth</label>
+                    <div style="font-size: 1.1rem; color: var(--charcoal);">
+                        <% if (participant.participantdob) { %>
+                            <%= new Date(participant.participantdob).toLocaleDateString() %>
+                        <% } else { %>
+                            N/A
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Address & Background -->
+            <div>
+                <h4 style="color: var(--rose-deep); margin-bottom: 1rem; font-size: 1.1rem;">Location & Background</h4>
+
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="display: block; color: #666; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Address</label>
+                    <div style="font-size: 1.1rem; color: var(--charcoal);">
+                        <%= participant.participantcity %>, <%= participant.participantstate %> <%= participant.participantzip %>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="display: block; color: #666; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">School / Employer</label>
+                    <div style="font-size: 1.1rem; color: var(--charcoal);"><%= participant.participantschooloremployer || 'N/A' %></div>
+                </div>
+
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="display: block; color: #666; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Field of Interest</label>
+                    <div style="font-size: 1.1rem; color: var(--charcoal);"><%= participant.participantfieldofinterest || 'N/A' %></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 2px solid var(--pink-light); display: flex; gap: 1rem;">
+            <a href="/participants" style="flex: 1; text-align: center; text-decoration: none;">
+                <button type="button" style="width: 100%; background-color: #6c757d; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                    Back to List
+                </button>
+            </a>
+            
+            <% if (userLevel === 'M') { %>
+                <a href="/editParticipant/<%= participant.participantid %>" style="flex: 1; text-align: center; text-decoration: none;">
+                    <button type="button" style="width: 100%; background-color: var(--rose-deep); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                        Edit Participant
+                    </button>
+                </a>
+            <% } %>
+        </div>
+
+    </div>
+</div>

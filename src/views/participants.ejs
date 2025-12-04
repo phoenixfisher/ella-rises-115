@@ -1,0 +1,70 @@
+<div class="landing">
+    <!-- Using hero-panel for the white card container -->
+    <div class="hero-panel" style="max-width: 1000px; margin: 0 auto;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="color: var(--charcoal); margin: 0;">Participants List</h2>
+            
+            <% if (userLevel === 'M') { %>
+                <form action="/addParticipant" method="GET" style="margin: 0;">
+                    <button type="submit" style="background-color: var(--rose-deep); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                        + Add Participant
+                    </button>
+                </form>
+            <% } %>
+        </div>
+
+        <% if (typeof error_message !== 'undefined' && error_message) { %>
+            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                <%= error_message %>
+            </div>
+        <% } %>
+
+        <% if (participants.length === 0) { %>
+            <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba;">
+                No participants found in the database.
+            </div>
+        <% } else { %>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding: 12px; color: var(--rose-deep); border-bottom: 2px solid var(--pink-light);">Name</th>
+                            <th style="text-align: left; padding: 12px; color: var(--rose-deep); border-bottom: 2px solid var(--pink-light);">Email</th>
+                            <th style="text-align: left; padding: 12px; color: var(--rose-deep); border-bottom: 2px solid var(--pink-light);">Phone Number</th>
+                            <th style="padding: 12px; border-bottom: 2px solid var(--pink-light);"></th>
+                            <th style="padding: 12px; border-bottom: 2px solid var(--pink-light);"></th>
+                            <th style="padding: 12px; border-bottom: 2px solid var(--pink-light);"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let iCount = 0; iCount < participants.length; iCount++) { %>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 12px; color: var(--charcoal); vertical-align: bottom;"><%= participants[iCount].participantfullname %></td>
+                                <td style="padding: 12px; color: #666; font-family: monospace; vertical-align: bottom;"><%= participants[iCount].participantemail %></td>
+                                <td style="padding: 12px; color: #666; font-family: monospace; vertical-align: bottom;"><%= participants[iCount].participantphone %></td>
+                                <td style="padding: 12px; text-align: right; vertical-align: bottom;">
+                                    <a href="/displayParticipant/<%= participants[iCount].participantid %>" style="display: inline-block; text-decoration: none; padding: 6px 12px; background-color: var(--pink-light); color: var(--rose-deep); border: none; border-radius: 4px; font-size: 0.9rem; font-weight: 600; vertical-align: bottom;">More Details</a>
+                                </td>
+                                <td style="padding: 12px; text-align: right; vertical-align: bottom;">
+                                    <a href="/editParticipant/<%= participants[iCount].participantid %>" style="display: inline-block; text-decoration: none; padding: 6px 12px; background-color: var(--pink-light); color: var(--rose-deep); border: none; border-radius: 4px; font-size: 0.9rem; font-weight: 600; vertical-align: bottom;">Edit</a>
+                                </td>
+                                <td style="padding: 12px; text-align: right; vertical-align: bottom;">
+                                    <form action="/deleteParticipant/<%= participants[iCount].participantid %>" method="post" onsubmit="return confirm('Are you sure you want to delete <%= participants[iCount].participantfullname %>?');" style="display: inline-block; margin: 0;">
+                                        <button type="submit" style="padding: 6px 12px; background-color: #dc3545; color: white; border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; vertical-align: bottom;">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+
+        <div style="margin-top: 2rem; border-top: 2px solid var(--pink-light); padding-top: 1rem;">
+            <a href="/" style="text-decoration: none;">
+                <button type="button" style="background-color: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">Back to Landing Page</button>
+            </a>
+        </div>
+    </div>
+</div>

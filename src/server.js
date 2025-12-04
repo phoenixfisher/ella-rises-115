@@ -416,6 +416,188 @@ app.post("/editUser/:id", async (req, res) => {
     }
 });
 
+// Route for viewing all participants (those with records in the participants table)
+app.get("/participants", requireRole(["M"]), (req, res) => {
+    knex.select(
+            'participantid',
+            'participantemail',
+            knex.raw("participantfirstname || ' ' || participantlastname as participantfullname"),
+            'participantphone'
+        ) 
+        .from("participants")
+        .then(participants => {
+            console.log(`Successfully retrieved ${participants.length} participants`);
+            res.render("participants", {
+                participants: participants,
+                userLevel: req.session.user.level,
+                user: req.session.user
+            });
+        })
+        .catch((err) => {
+            console.error("Database query error:", err.message);
+            res.render("participants", {
+                participants: [],
+                userLevel: req.session.user ? req.session.user.level : null,
+                user: req.session.user, 
+                error_message: `Database error: ${err.message}`
+            });
+        });
+});
+
+// Route to view the full info for a specific participant (read-only)
+app.get("/displayParticipant/:id", requireRole(["M"]), (req, res) => {
+    const participantid = req.params.id;
+
+    knex("participants")
+        .select("*") // Fetch ALL details for this specific person
+        .where({ participantid: participantid })
+        .first()
+        .then((participant) => {
+            if (!participant) {
+                return res.status(404).render("participants", {
+                    participants: [],
+                    userLevel: req.session.user.level,
+                    error_message: "Participant not found."
+                });
+            }
+            res.render("displayParticipant", {
+                participant: participant,
+                userLevel: req.session.user.level,
+                user: req.session.user
+            });
+        })
+        .catch((err) => {
+            console.error("Error fetching participant details:", err.message);
+            res.status(500).send("Server Error");
+        });
+});
+
+// Routes for adding a new participant
+// GET: Show the empty form
+app.get("/addParticipant", requireRole(["M"]), (req, res) => {
+    res.render("addParticipant", {
+        userLevel: req.session.user.level,
+        user: req.session.user
+    });
+});
+
+// POST: Save the new participant
+app.post("/addParticipant", requireRole(["M"]), (req, res) => {
+    // Destructure all fields from the form
+    const { 
+        participantfirstname, participantlastname, participantemail, 
+        participantphone, participantdob, participantrole, 
+        participantcity, participantstate, participantzip, 
+        participantschooloremployer, participantfieldofinterest 
+    } = req.body;
+
+    // Basic validation
+    if (!participantfirstname || !participantlastname || !participantemail) {
+        return res.status(400).render("addParticipant", {
+            userLevel: req.session.user.level,
+            error_message: "First Name, Last Name, and Email are required."
+        });
+    }
+
+    knex("participants")
+        .insert({
+            participantfirstname,
+            participantlastname,
+            participantemail,
+            participantphone,
+            participantdob,
+            participantrole,
+            participantcity,
+            participantstate,
+            participantzip,
+            participantschooloremployer,
+            participantfieldofinterest
+        })
+        .then(() => {
+            res.redirect("/participants");
+        })
+        .catch((err) => {
+            console.error("Error adding participant:", err.message);
+            res.status(500).render("addParticipant", {
+                userLevel: req.session.user.level,
+                error_message: "Unable to add participant. Please try again."
+            });
+        });
+});
+
+// Routes for editing an existing participant
+// GET: Show form pre-filled with current data
+app.get("/editParticipant/:id", requireRole(["M"]), (req, res) => {
+    const participantid = req.params.id;
+
+    knex("participants")
+        .select("*")
+        .where({ participantid: participantid })
+        .first()
+        .then((participant) => {
+            if (!participant) {
+                return res.status(404).send("Participant not found");
+            }
+            res.render("editParticipant", {
+                participant: participant,
+                userLevel: req.session.user.level,
+                user: req.session.user
+            });
+        })
+        .catch((err) => {
+            console.error("Error loading participant for edit:", err.message);
+            res.status(500).send("Server Error");
+        });
+});
+
+// POST: Update the participant in the database
+app.post("/editParticipant/:id", requireRole(["M"]), (req, res) => {
+    const participantid = req.params.id;
+    
+    // Collect updated data
+    const { 
+        participantfirstname, participantlastname, participantemail, 
+        participantphone, participantdob, participantrole, 
+        participantcity, participantstate, participantzip, 
+        participantschooloremployer, participantfieldofinterest 
+    } = req.body;
+
+    knex("participants")
+        .where({ participantid: participantid })
+        .update({
+            participantfirstname,
+            participantlastname,
+            participantemail,
+            participantphone,
+            participantdob,
+            participantrole,
+            participantcity,
+            participantstate,
+            participantzip,
+            participantschooloremployer,
+            participantfieldofinterest
+        })
+        .then(() => {
+            res.redirect("/participants");
+        })
+        .catch((err) => {
+            console.error("Error updating participant:", err.message);
+            // Re-render form with error message if it fails
+            res.status(500).send("Error updating participant");
+        });
+});
+
+// Handle form submission for deleting a participant
+app.post("/deleteParticipant/:id", (req, res) => {
+    
+    knex("participants").where("participantid", req.params.id).del().then(participants => {
+        res.redirect("/participants");
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json({err});
+    })
+});
+
 // Route for viewing events
 app.get("/events", async (req, res) => {
     try {
