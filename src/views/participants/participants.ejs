@@ -14,6 +14,27 @@
             <% } %>
         </div>
 
+        <form action="/participants" method="GET" style="margin-bottom: 2rem; display: flex; gap: 10px;">
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Search name, email, or phone..." 
+                value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                style="flex: 1; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;"
+            >
+            <button type="submit" style="width: auto; margin-top: 0; padding: 10px 20px; background-color: var(--lavender); color: white; font-weight: bold;">
+                Search
+            </button>
+            
+            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                <a href="/participants" style="text-decoration: none;">
+                    <button type="button" style="width: auto; margin-top: 0; padding: 10px 20px; background-color: #6c757d; color: white; font-weight: bold;">
+                        Clear
+                    </button>
+                </a>
+            <% } %>
+        </form>
+
         <% if (typeof error_message !== 'undefined' && error_message) { %>
             <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
                 <%= error_message %>
