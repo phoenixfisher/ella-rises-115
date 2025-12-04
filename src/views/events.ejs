@@ -1,112 +1,125 @@
-<div class="container mt-4">
+<div class="landing">
     <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
         <h1>Events</h1>
         <!-- Only show Add button if user is logged in AND is a Manager ('M') -->
         <% if (user && user.level === 'M') { %>
-            <a href="/addEvent" class="btn btn-success">
-                Create New Event
-            </a>
+            <!-- Using a form to leverage the global button styling in styles.css -->
+            <form action="/addEvent" method="GET" style="margin: 0;">
+                <button type="submit" style="margin-top: 0; width: auto; padding: 10px 24px;">
+                    Create New Event
+                </button>
+            </form>
         <% } %>
     </div>
 
     <!-- LOGIC: Split events into two arrays -->
     <% 
         const currentDate = new Date();
-        // Filter events where start time is greater than or equal to now
         const upcomingEvents = events.filter(e => new Date(e.eventdatetimestart) >= currentDate);
-        // Filter events where start time is less than now
         const pastEvents = events.filter(e => new Date(e.eventdatetimestart) < currentDate);
     %>
 
     <!-- UPCOMING EVENTS SECTION -->
-    <h3 class="border-bottom pb-2 mb-3 text-primary">Upcoming Events</h3>
+    <h2 style="color: var(--rose-deep); border-bottom: 2px solid var(--pink-light); padding-bottom: 10px; margin-bottom: 20px;">Upcoming Events</h2>
     
     <% if (upcomingEvents.length === 0) { %>
-        <div class="alert alert-info mb-5">No upcoming events found.</div>
+        <div style="padding: 20px; background: var(--white); border-radius: 8px; border: 1px solid var(--pink-light);">
+            No upcoming events found.
+        </div>
     <% } else { %>
-        <div class="row mb-5">
+        <div class="pillar-grid">
             <% upcomingEvents.forEach(event => { %>
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm border-primary">
-                        <div class="card-body">
-                            <h5 class="card-title"><%= event.eventname %></h5>
-                            <h6 class="card-subtitle mb-2 text-muted"><%= event.eventtype %></h6>
-                            
-                            <p class="card-text">
-                                <%= event.eventdescription.substring(0, 100) %>...
-                            </p>
+                <div class="hero-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <!-- Event Type Badge -->
+                        <span class="hero-badge" style="background: var(--lavender); margin-bottom: 12px; font-size: 0.85rem;">
+                            <%= event.eventtype %>
+                        </span>
 
-                            <ul class="list-group list-group-flush mb-3">
-                                <li class="list-group-item">
-                                    <strong>Start:</strong> 
-                                    <%= new Date(event.eventdatetimestart).toLocaleString() %>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Location:</strong> <%= event.eventlocation %>
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Recurrence:</strong> <%= event.eventrecurrencepattern %>
-                                </li>
-                            </ul>
+                        <h3 style="margin-top: 0.5rem; color: var(--charcoal);"><%= event.eventname %></h3>
+                        
+                        <p style="color: var(--charcoal); line-height: 1.5; font-size: 0.95rem;">
+                            <%= event.eventdescription.substring(0, 100) %>...
+                        </p>
 
-                            <!-- Buttons only visible to Managers -->
-                            <% if (user && user.level === 'M') { %>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a href="/editEvent/<%= event.eventid %>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                    
-                                    <form action="/deleteEvent/<%= event.eventid %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this event?');">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
-                            <% } %>
-                        </div>
+                        <ul style="list-style: none; padding: 0; margin: 15px 0; color: var(--charcoal); font-size: 0.9rem;">
+                            <li style="margin-bottom: 8px;">
+                                <strong style="color: var(--rose-deep);">Start:</strong> 
+                                <%= new Date(event.eventdatetimestart).toLocaleString() %>
+                            </li>
+                            <li style="margin-bottom: 8px;">
+                                <strong style="color: var(--rose-deep);">Location:</strong> <%= event.eventlocation %>
+                            </li>
+                            <li style="margin-bottom: 8px;">
+                                <strong style="color: var(--rose-deep);">Recurrence:</strong> <%= event.eventrecurrencepattern %>
+                            </li>
+                        </ul>
                     </div>
+
+                    <!-- Buttons only visible to Managers -->
+                    <% if (user && user.level === 'M') { %>
+                        <div class="hero-actions" style="margin-top: auto; display: flex; gap: 10px;">
+                            <!-- Edit Button (styled manually to differ from delete) -->
+                            <button onclick="location.href='/editEvent/<%= event.eventid %>'" 
+                                    style="background: var(--blue-soft); margin-top: 0; padding: 8px 16px; font-size: 0.9rem; flex: 1;">
+                                Edit
+                            </button>
+                            
+                            <form action="/deleteEvent/<%= event.eventid %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this event?');" style="flex: 1;">
+                                <button type="submit" style="margin-top: 0; padding: 8px 16px; font-size: 0.9rem;">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    <% } %>
                 </div>
             <% }) %>
         </div>
     <% } %>
 
     <!-- PAST EVENTS SECTION -->
-    <h3 class="border-bottom pb-2 mb-3 text-secondary">Past Events</h3>
+    <h2 style="color: var(--charcoal); border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-top: 50px; margin-bottom: 20px;">Past Events</h2>
 
     <% if (pastEvents.length === 0) { %>
-        <div class="alert alert-light text-muted">No past events found.</div>
+        <p style="color: var(--charcoal); opacity: 0.7;">No past events found.</p>
     <% } else { %>
-        <div class="row">
+        <div class="pillar-grid">
             <% pastEvents.forEach(event => { %>
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm bg-light text-muted">
-                        <div class="card-body">
-                            <h5 class="card-title"><%= event.eventname %></h5>
-                            <h6 class="card-subtitle mb-2"><%= event.eventtype %></h6>
-                            
-                            <p class="card-text small">
-                                <%= event.eventdescription.substring(0, 80) %>...
-                            </p>
+                <div class="hero-panel" style="opacity: 0.8; background: #f9f9f9; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3 style="margin-top: 0; color: var(--charcoal); font-size: 1.2rem;"><%= event.eventname %></h3>
+                        <h6 style="color: var(--lavender); margin: 5px 0 15px 0; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;"><%= event.eventtype %></h6>
+                        
+                        <p style="font-size: 0.9rem; color: #666;">
+                            <%= event.eventdescription.substring(0, 80) %>...
+                        </p>
 
-                            <ul class="list-group list-group-flush mb-3 bg-light">
-                                <li class="list-group-item bg-light">
-                                    <strong>Date:</strong> 
-                                    <%= new Date(event.eventdatetimestart).toLocaleDateString() %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                    <strong>Location:</strong> <%= event.eventlocation %>
-                                </li>
-                            </ul>
-
-                            <!-- Buttons only visible to Managers -->
-                            <% if (user && user.level === 'M') { %>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a href="/editEvent/<%= event.eventid %>" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    
-                                    <form action="/deleteEvent/<%= event.eventid %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this past event?');">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
-                            <% } %>
-                        </div>
+                        <ul style="list-style: none; padding: 0; margin: 15px 0; font-size: 0.9rem; color: #666;">
+                            <li style="margin-bottom: 5px;">
+                                <strong>Date:</strong> <%= new Date(event.eventdatetimestart).toLocaleDateString() %>
+                            </li>
+                            <li style="margin-bottom: 5px;">
+                                <strong>Location:</strong> <%= event.eventlocation %>
+                            </li>
+                        </ul>
                     </div>
+
+                    <!-- Buttons only visible to Managers -->
+                    <% if (user && user.level === 'M') { %>
+                        <div class="hero-actions" style="margin-top: auto; display: flex; gap: 10px;">
+                            <button onclick="location.href='/editEvent/<%= event.eventid %>'" 
+                                    style="background: #ccc; color: var(--charcoal); margin-top: 0; padding: 6px 12px; font-size: 0.8rem; flex: 1;">
+                                Edit
+                            </button>
+                            
+                            <form action="/deleteEvent/<%= event.eventid %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this past event?');" style="flex: 1;">
+                                <button type="submit" style="background: var(--coral); margin-top: 0; padding: 6px 12px; font-size: 0.8rem;">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    <% } %>
                 </div>
             <% }) %>
         </div>
