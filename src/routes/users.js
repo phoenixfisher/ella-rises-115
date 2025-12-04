@@ -66,7 +66,7 @@ router.post("/deleteUser/:id", requireRole(["M"]), (req, res) => {
         .where("id", req.params.id)
         .del()
         .then(() => {
-            req.flash("success", "User deleted.");
+            req.flash("error", "User deleted.");
             res.redirect("/users");
         })
         .catch((err) => {

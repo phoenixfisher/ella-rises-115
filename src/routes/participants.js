@@ -212,7 +212,7 @@ router.post("/deleteParticipant/:id", requireRole(["M"]), (req, res) => {
         .where("participantid", req.params.id)
         .del()
         .then(() => {
-            req.flash("success", "Participant deleted.");
+            req.flash("error", "Participant deleted.");
             res.redirect("/participants");
         })
         .catch((err) => {

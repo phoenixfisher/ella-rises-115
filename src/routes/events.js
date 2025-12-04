@@ -159,7 +159,7 @@ router.post("/deleteEvent/:id", requireAuth, async (req, res) => {
             await trx("events").where({ eventid: targetEventId }).del();
         });
 
-        req.flash("success", "Event deleted.");
+        req.flash("error", "Event deleted.");
         res.redirect("/events");
     } catch (err) {
         console.error("Error deleting event:", err);

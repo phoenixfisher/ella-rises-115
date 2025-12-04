@@ -34,7 +34,7 @@ router.get("/deleteDonation/:donationid", async (req, res) => {
 
     try {
         await db("donations").where("donationid", donationid).del();
-        req.flash("success", "Donation deleted.");
+        req.flash("error", "Donation deleted.");
         res.redirect("/donations");
     } catch (err) {
         console.error(err);
