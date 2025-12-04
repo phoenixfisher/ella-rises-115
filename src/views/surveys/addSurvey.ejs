@@ -69,9 +69,17 @@
             </div>
 
             <div style="display: flex; gap: 15px; border-top: 2px solid var(--pink-light); padding-top: 1.5rem;">
-                <a href="/surveys" style="flex: 1; text-align: center;">
-                    <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal);">Cancel</button>
-                </a>
+                <% if (userLevel === 'M') { %>
+                    <a href="/surveys" style="flex: 1; text-align: center;">
+                        <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal);">Cancel</button>
+                    </a>
+                
+                <% } else { %>
+                    <a href="/" style="flex: 1; text-align: center;">
+                        <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal);">Cancel</button>
+                    </a>
+                <% } %>
+
                 <div style="flex: 1;">
                     <button type="submit" style="width: 100%; padding: 12px; background: var(--rose-deep); color: white;">
                         Submit Review
