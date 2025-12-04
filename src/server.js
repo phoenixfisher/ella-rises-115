@@ -592,6 +592,41 @@ app.post('/deleteEvent/:id', async (req, res) => {
 });
 
 // =========================
+// Display Donations
+// =========================
+app.get("/donations", async (req, res) => {
+
+    try {
+        const donations = await knex("donations as d")
+        .join("participants as p", "d.participantid", "p.participantid")
+        .select(
+        "p.participantfirstname",
+        "p.participantlastname",
+        "d.donationdate",
+        "d.donationamount"
+    )
+    .orderByRaw("d.donationdate IS NULL ASC, d.donationdate DESC")
+
+        res.render("donations", {     
+            donations,
+            user: req.session.user || null
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.send("Error loading page");
+    }
+});
+
+// =========================
+// Delete Donations
+// =========================
+
+
+
+
+
+// =========================
 // START SERVER
 // =========================
 const port = process.env.PORT || 3000;

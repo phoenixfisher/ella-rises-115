@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Donation List</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<h2>Donations</h2>
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Donor</th>
+            <th>Donation Date</th>
+            <th>Amount</th>
+
+            <% if (user && user.level === 'M') { %>
+                <th>Edit</th>
+                <th>Delete</th>
+            <% } %>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% donations.forEach(d => { %>
+            <tr>
+                <td><%= d.participantfirstname %> <%= d.participantlastname %></td>
+                <td><%= d.donationdate %></td>
+                <td>$<%= d.donationamount %></td>
+
+
+
+                <% if (user && user.level === 'M') { %>
+                    <td>
+                        <a href="/editDonation/<%= d.id %>">
+                            <button>Edit</button>
+                        </a>
+                    </td>
+
+                    <td>
+                        <a href="/deleteDonation/<%= d.id %>"
+                           onclick="return confirm('Are you sure you want to delete this donation?');">
+                            <button>Delete</button>
+                        </a>
+                    </td>
+                <% } %>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+</body>
+</html>
+
