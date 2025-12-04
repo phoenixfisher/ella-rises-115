@@ -32,6 +32,30 @@
                     </thead>
                     <tbody>
                         <% surveys.forEach(survey => { %>
+                            <% 
+                                const score = Number(survey.surveyoverallscore).toFixed(1);
+                                
+                                // Logic for Score Color
+                                let scoreColor = '#dc3545'; // Default Red
+                                if (survey.surveyoverallscore >= 4) { 
+                                    scoreColor = '#28a745'; // Green
+                                } else if (survey.surveyoverallscore >= 3) { 
+                                    scoreColor = '#ffc107'; // Yellow
+                                } else if (!survey.surveyoverallscore) {
+                                    scoreColor = '#6c757d'; // Gray if null
+                                }
+                                
+                                // Logic for Badge Color
+                                let badgeColor = '#6c757d'; // Default Gray
+                                if (survey.surveynpsbucket === 'Promoter') {
+                                    badgeColor = '#28a745'; // Green
+                                } else if (survey.surveynpsbucket === 'Passive') {
+                                    badgeColor = '#ffc107'; // Yellow
+                                } else if (survey.surveynpsbucket === 'Detractor') {
+                                    badgeColor = '#dc3545'; // Red
+                                }
+                            %>
+
                             <tr>
                                 <td>
                                     <%= new Date(survey.eventdatetimestart).toLocaleDateString() %>
@@ -43,20 +67,13 @@
                                     <%= survey.participantfirstname %> <%= survey.participantlastname %>
                                 </td>
                                 <td>
-                                    <% const score = Number(survey.surveyoverallscore).toFixed(1); %>
-                                    <span style="font-weight: bold; color: <%= score >= 4 ? '#28a745' : (score >= 3 ? '#ffc107' : '#dc3545') %>;">
-                                        <%= score %> / 5.0
+                                    <span style="font-weight: bold; color: <%= scoreColor %>;">
+                                        <%= survey.surveyoverallscore ? score + ' / 5.0' : 'N/A' %>
                                     </span>
                                 </td>
                                 <td>
-                                    <% 
-                                        let badgeColor = '#6c757d'; // Default gray
-                                        if (survey.surveynpsbucket === 'Promoter') badgeColor = '#28a745';
-                                        if (survey.surveynpsbucket === 'Passive') badgeColor = '#ffc107'; // Yellow/Orange
-                                        if (survey.surveynpsbucket === 'Detractor') badgeColor = '#dc3545';
-                                    %>
                                     <span style="background-color: <%= badgeColor %>; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">
-                                        <%= survey.surveynpsbucket %>
+                                        <%= survey.surveynpsbucket || 'N/A' %>
                                     </span>
                                 </td>
                                 
