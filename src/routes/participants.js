@@ -5,21 +5,37 @@ const { requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
-// Route for viewing all participants
+// Route for viewing all participants with search functionality
 router.get("/participants", requireRole(["M"]), (req, res) => {
-    db.select(
+    // 1. Get the search term from the URL query string (defaults to empty string)
+    const searchTerm = req.query.search || "";
+
+    // 2. Start the base query
+    let query = db.select(
         "participantid",
         "participantemail",
         db.raw("participantfirstname || ' ' || participantlastname as participantfullname"),
         "participantphone"
-    )
-        .from("participants")
-        .then((participants) => {
+    ).from("participants");
+
+    // 3. If a search term exists, add the filter logic
+    if (searchTerm) {
+        query = query.where((builder) => {
+            builder.where("participantfirstname", "ilike", `%${searchTerm}%`)
+                   .orWhere("participantlastname", "ilike", `%${searchTerm}%`)
+                   .orWhere("participantemail", "ilike", `%${searchTerm}%`)
+                   .orWhere("participantphone", "ilike", `%${searchTerm}%`);
+        });
+    }
+
+    // 4. Execute query and render
+    query.then((participants) => {
             console.log(`Successfully retrieved ${participants.length} participants`);
             res.render("participants/participants", {
                 participants: participants,
                 userLevel: req.session.user.level,
                 user: req.session.user,
+                searchTerm: searchTerm // Pass this back to the view to keep the input filled
             });
         })
         .catch((err) => {
@@ -29,6 +45,7 @@ router.get("/participants", requireRole(["M"]), (req, res) => {
                 userLevel: req.session.user ? req.session.user.level : null,
                 user: req.session.user,
                 error_message: `Database error: ${err.message}`,
+                searchTerm: searchTerm
             });
         });
 });
