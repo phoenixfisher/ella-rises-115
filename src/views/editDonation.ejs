@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Donation</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<main class="login-container">
+    <h1>Edit Donation</h1>
+
+    <form action="/editDonation/<%= donation.donationid %>" method="POST">
+
+        <label>Donation Date:</label>
+        <input 
+            type="date" 
+            name="donationdate" 
+            value="<%= donation.donationdate ? donation.donationdate.toISOString().split('T')[0] : '' %>"
+            required
+        >
+
+        <label>Donation Amount ($):</label>
+        <input 
+            type="number" 
+            name="donationamount" 
+            value="<%= donation.donationamount %>"
+            step="0.01"
+            required
+        >
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <p style="margin-top: 1rem;">
+        <button onclick="history.back()" class="back-btn">Cancel</button>
+    </p>
+
+</main>
+
+</body>
+</html>

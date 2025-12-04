@@ -636,6 +636,100 @@ app.get("/deleteDonation/:donationid", async (req, res) => {
     }
 });
 
+// =========================
+// Edit Donation (Show Form)
+// =========================
+app.get("/editDonation/:donationid", async (req, res) => {
+    const donationid = req.params.donationid;
+
+    try {
+        const donation = await knex("donations")
+            .where("donationid", donationid)
+            .first();
+
+        if (!donation) {
+            return res.send("Donation not found");
+        }
+
+        res.render("editDonation", {
+            donation,
+            user: req.session.user || null
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.send("Error loading donation");
+    }
+});
+
+// =========================
+// Edit Donation (Submit Form)
+// =========================
+app.post("/editDonation/:donationid", async (req, res) => {
+    const donationid = req.params.donationid;
+    const { donationdate, donationamount } = req.body;
+
+    try {
+        await knex("donations")
+            .where("donationid", donationid)
+            .update({
+                donationdate,
+                donationamount
+            });
+
+        res.redirect("/donations");
+
+    } catch (err) {
+        console.error(err);
+        res.send("Error updating donation");
+    }
+});
+
+// =========================
+// Add Donation (Form View)
+// =========================
+app.get("/addDonation", async (req, res) => {
+    try {
+        res.render("addDonation", {
+            user: req.session.user || null
+        });
+    } catch (err) {
+        console.error(err);
+        res.send("Error loading Add Donation page");
+    }
+});
+
+
+app.post("/addDonation", async (req, res) => {
+    const { firstname, lastname, donationdate, donationamount } = req.body;
+
+    try {
+        // Insert participant and return ID
+        const [newParticipant] = await knex("participants")
+            .insert({
+                participantfirstname: firstname,
+                participantlastname: lastname
+            })
+            .returning(["participantid"]);
+
+        // Extract ID
+        const participantid = newParticipant.participantid;
+
+        // Insert donation
+        await knex("donations").insert({
+            participantid,
+            donationdate,
+            donationamount
+        });
+
+        res.redirect("/donations");
+
+    } catch (err) {
+        console.error(err);
+        res.send("Error adding donation");
+    }
+});
+
 
 
 // =========================
