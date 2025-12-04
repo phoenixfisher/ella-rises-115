@@ -1,0 +1,89 @@
+<div class="landing">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1>Participants</h1>
+        </div>
+        <% if (user && user.level === 'M') { %>
+            <form action="/participants/add" method="GET" style="margin: 0;">
+                <button type="submit" style="margin-top: 0; width: auto; padding: 10px 24px;">
+                    Add Participant
+                </button>
+            </form>
+        <% } %>
+    </div>
+
+    <% if (!participants || participants.length === 0) { %>
+        <div class="hero-panel" style="padding: 24px; border: 1px solid var(--pink-light);">
+            No participants found.
+        </div>
+    <% } else { %>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <% participants.forEach(participant => { 
+                const email = participant.participantemail || participant.email;
+                const phone = participant.participantphone || participant.phone;
+                const cohort = participant.participantcohort || participant.cohort;
+                const status = participant.participantstatus || participant.status;
+            %>
+                <div class="hero-panel" style="display: flex; gap: 18px; align-items: flex-start; justify-content: space-between;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <h3 style="margin: 0; color: var(--charcoal);">
+                                <%= participant.participantfirstname %> <%= participant.participantlastname %>
+                            </h3>
+                            <% if (status) { %>
+                                <span class="hero-badge" style="background: var(--lavender); font-size: 0.82rem; margin-bottom: 0;">
+                                    <%= status %>
+                                </span>
+                            <% } %>
+                            <% if (cohort) { %>
+                                <span class="hero-badge" style="background: var(--blue-soft); color: var(--charcoal); font-size: 0.82rem; margin-bottom: 0;">
+                                    Cohort <%= cohort %>
+                                </span>
+                            <% } %>
+                        </div>
+
+                        <ul style="list-style: none; padding: 0; margin: 12px 0 0 0; color: var(--charcoal); line-height: 1.5;">
+                            <% if (email || phone) { %>
+                                <li>
+                                    <strong style="color: var(--rose-deep);">Contact:</strong>
+                                    <% if (email) { %>
+                                        <a href="mailto:<%= email %>" style="color: var(--lavender);"><%= email %></a>
+                                    <% } %>
+                                    <% if (email && phone) { %> · <% } %>
+                                    <% if (phone) { %><span><%= phone %></span><% } %>
+                                </li>
+                            <% } %>
+                            <% if (participant.program || participant.participantprogram) { %>
+                                <li>
+                                    <strong style="color: var(--rose-deep);">Program:</strong>
+                                    <%= participant.program || participant.participantprogram %>
+                                </li>
+                            <% } %>
+                            <% if (participant.city || participant.participantcity) { %>
+                                <li>
+                                    <strong style="color: var(--rose-deep);">Location:</strong>
+                                    <%= participant.city || participant.participantcity %>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </div>
+
+                    <% if (user && user.level === 'M') { %>
+                        <div class="hero-actions" style="flex-direction: column; width: 180px;">
+                            <button type="button" style="margin-top: 0; width: 100%; padding: 8px 12px;"
+                                    onclick="location.href='/participants/<%= participant.participantid %>/edit'">
+                                Edit
+                            </button>
+                            <form action="/participants/<%= participant.participantid %>/delete" method="POST"
+                                  onsubmit="return confirm('Delete this participant?');" style="width: 100%; margin: 0;">
+                                <button type="submit" style="margin-top: 0; width: 100%; padding: 8px 12px;">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+</div>

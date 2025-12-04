@@ -188,6 +188,166 @@ app.get("/logout", (req, res) => {
     });
 });
 
+// =========================
+// PARTICIPANTS (list view)
+// =========================
+app.get("/participants", requireAuth, async (req, res) => {
+    try {
+        const participants = await knex("participants").select("*").orderBy("participantlastname", "asc");
+        res.render("participants/participants", {
+            participants,
+            user: req.session.user,
+        });
+    } catch (err) {
+        console.error("Error fetching participants:", err);
+        res.status(500).send("Error loading participants");
+    }
+});
+
+// Add participant (form)
+app.get("/participants/add", requireRole(["M"]), (req, res) => {
+    res.render("participants/addParticipant", {
+        user: req.session.user,
+        error_message: "",
+    });
+});
+
+// Add participant (submit)
+app.post("/participants/add", requireRole(["M"]), async (req, res) => {
+    const {
+        participantfirstname,
+        participantlastname,
+        participantemail,
+        participantphone,
+        participantcohort,
+        participantstatus,
+        participantprogram,
+        participantcity,
+    } = req.body;
+
+    if (!participantfirstname || !participantlastname) {
+        return res.status(400).render("participants/addParticipant", {
+            user: req.session.user,
+            error_message: "First and last name are required.",
+        });
+    }
+
+    try {
+        await knex("participants").insert({
+            participantfirstname,
+            participantlastname,
+            participantemail: participantemail || null,
+            participantphone: participantphone || null,
+            participantcohort: participantcohort || null,
+            participantstatus: participantstatus || null,
+            participantprogram: participantprogram || null,
+            participantcity: participantcity || null,
+        });
+        res.redirect("/participants");
+    } catch (err) {
+        console.error("Error adding participant:", err);
+        res.status(500).render("participants/addParticipant", {
+            user: req.session.user,
+            error_message: "Unable to add participant. Please try again.",
+        });
+    }
+});
+
+// Edit participant (form)
+app.get("/participants/:id/edit", requireRole(["M"]), async (req, res) => {
+    try {
+        const participant = await knex("participants").where({ participantid: req.params.id }).first();
+        if (!participant) {
+            return res.status(404).send("Participant not found");
+        }
+        res.render("participants/editParticipant", {
+            participant,
+            user: req.session.user,
+            error_message: "",
+        });
+    } catch (err) {
+        console.error("Error loading participant:", err);
+        res.status(500).send("Error loading participant");
+    }
+});
+
+// Edit participant (submit)
+app.post("/participants/:id/edit", requireRole(["M"]), async (req, res) => {
+    const {
+        participantfirstname,
+        participantlastname,
+        participantemail,
+        participantphone,
+        participantcohort,
+        participantstatus,
+        participantprogram,
+        participantcity,
+    } = req.body;
+
+    if (!participantfirstname || !participantlastname) {
+        try {
+            const participant = await knex("participants").where({ participantid: req.params.id }).first();
+            return res.status(400).render("participants/editParticipant", {
+                participant,
+                user: req.session.user,
+                error_message: "First and last name are required.",
+            });
+        } catch (err) {
+            console.error("Error reloading participant:", err);
+            return res.status(500).send("Unable to update participant.");
+        }
+    }
+
+    try {
+        const updated = await knex("participants")
+            .where({ participantid: req.params.id })
+            .update({
+                participantfirstname,
+                participantlastname,
+                participantemail: participantemail || null,
+                participantphone: participantphone || null,
+                participantcohort: participantcohort || null,
+                participantstatus: participantstatus || null,
+                participantprogram: participantprogram || null,
+                participantcity: participantcity || null,
+            });
+
+        if (!updated) {
+            return res.status(404).send("Participant not found");
+        }
+
+        res.redirect("/participants");
+    } catch (err) {
+        console.error("Error updating participant:", err);
+        res.status(500).render("participants/editParticipant", {
+            participant: {
+                participantid: req.params.id,
+                participantfirstname,
+                participantlastname,
+                participantemail,
+                participantphone,
+                participantcohort,
+                participantstatus,
+                participantprogram,
+                participantcity,
+            },
+            user: req.session.user,
+            error_message: "Unable to update participant. Please try again.",
+        });
+    }
+});
+
+// Delete participant
+app.post("/participants/:id/delete", requireRole(["M"]), async (req, res) => {
+    try {
+        await knex("participants").where({ participantid: req.params.id }).del();
+        res.redirect("/participants");
+    } catch (err) {
+        console.error("Error deleting participant:", err);
+        res.status(500).send("Error deleting participant");
+    }
+});
+
 // Route for getting the create account view
 app.get("/create-account", (req, res) => {
     res.render("auth/create-account", { layout: false, error_message: "" });

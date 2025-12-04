@@ -1,0 +1,49 @@
+<div class="landing">
+    <h1>Add Participant</h1>
+    <% if (error_message) { %>
+        <div class="error"><%= error_message %></div>
+    <% } %>
+    <div class="hero-panel">
+        <form action="/participants/add" method="POST" style="display: grid; gap: 14px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                <div>
+                    <label for="participantfirstname">First Name *</label>
+                    <input type="text" id="participantfirstname" name="participantfirstname" required>
+                </div>
+                <div>
+                    <label for="participantlastname">Last Name *</label>
+                    <input type="text" id="participantlastname" name="participantlastname" required>
+                </div>
+                <div>
+                    <label for="participantemail">Email</label>
+                    <input type="email" id="participantemail" name="participantemail">
+                </div>
+                <div>
+                    <label for="participantphone">Phone</label>
+                    <input type="text" id="participantphone" name="participantphone">
+                </div>
+                <div>
+                    <label for="participantcohort">Cohort</label>
+                    <input type="text" id="participantcohort" name="participantcohort">
+                </div>
+                <div>
+                    <label for="participantstatus">Status</label>
+                    <input type="text" id="participantstatus" name="participantstatus">
+                </div>
+                <div>
+                    <label for="participantprogram">Program</label>
+                    <input type="text" id="participantprogram" name="participantprogram">
+                </div>
+                <div>
+                    <label for="participantcity">City</label>
+                    <input type="text" id="participantcity" name="participantcity">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="submit" style="margin-top: 0; width: auto; padding: 10px 18px;">Save Participant</button>
+                <a href="/participants" style="padding: 10px 18px; border: 1px solid var(--pink-light); border-radius: 8px; color: var(--charcoal); background: var(--white); font-weight: 600;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
