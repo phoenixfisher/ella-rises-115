@@ -79,7 +79,7 @@ footer {
 }
 
 /* ================================
-   LOGIN and Create User PAGE ONLY
+   Make Donations Styles
 ================================ */
 .login-container {
     width: 360px;
@@ -436,4 +436,133 @@ a:hover {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* ================================
+ Login and Create User styles
+================================ */
+.login-body {
+    background: var(--cream);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container-2col {
+    width: 800px;
+    height: 480px;
+    display: flex;
+    overflow: hidden;
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+    background: var(--white);
+    animation: fadeIn 0.6s ease;
+}
+
+.login-left {
+    width: 40%;
+    background: var(--pink-mid);
+    color: white;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-left h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: bold;
+}
+
+.login-left p {
+    margin-top: 10px;
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.login-right {
+    width: 60%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-right h2 {
+    margin-bottom: 1.2rem;
+    color: var(--charcoal);
+}
+
+.login-right label {
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-top: 1rem;
+}
+
+.login-right input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--pink-light);
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+.login-right input:focus {
+    border-color: var(--lavender);
+    box-shadow: 0 0 6px rgba(151,142,196,0.3);
+    outline: none;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: var(--rose-deep);
+    color: var(--white);
+    border: none;
+    margin-top: 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: 0.25s ease;
+}
+
+.btn-primary:hover {
+    background: #b22c51;
+}
+
+.login-links-2 {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.login-links-2 a {
+    color: var(--lavender);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login-links-2 a:hover {
+    color: var(--rose-deep);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.login-left-logo {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.login-left-logo img {
+    width: 95%;
+    max-width: 320px;
+    opacity: 0.92;
 }

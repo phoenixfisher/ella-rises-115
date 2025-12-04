@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
 
 // Optional login route (same page)
 router.get("/login", (req, res) => {
-    res.render("auth/login");
+    res.render("auth/login", { layout: false, error_message: "" });
 });
 
 // Alias for registration route

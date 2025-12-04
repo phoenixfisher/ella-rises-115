@@ -1,5 +1,5 @@
 <% title = "Login"; %>
-<% error_message = typeof error_message !== "undefined" ? error_message : ""; %>
+<% error_message = error_message || ""; %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,29 +9,46 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 
-<body>
+<body class="login-body">
 
-<main class="login-container">
-    <h1>User Login</h1>
+<div class="login-container-2col">
 
-    <% if (error_message) { %>
-        <p class="error"><%= error_message %></p>
-    <% } %>
+    <!-- LEFT PANEL -->
+    <div class="login-left">
+        <h1>Welcome Back</h1>
 
-    <form action="/login" method="POST">
-        <label>Username</label>
-        <input type="text" name="username" required>
+        <div class="login-left-logo">
+            <img src="/images/logo_transparent.png" alt="Ella Rises Logo">
+        </div>
+    </div>
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+    <!-- RIGHT PANEL (FORM) -->
+    <div class="login-right">
 
-        <button type="submit">Login</button>
-    </form>
+        <% if (error_message) { %>
+            <p class="error login-error"><%= error_message %></p>
+        <% } %>
 
-    <button onclick="history.back()" class="back-btn">Back</button>
-    <a href="/create-account">Create an Account</a>
+        <h2>Login</h2>
 
-</main>
+        <form action="/login" method="POST">
+            <label>Username</label>
+            <input type="text" name="username" required>
+
+            <label>Password</label>
+            <input type="password" name="password" required>
+
+            <button class="btn-primary" type="submit">Login</button>
+        </form>
+
+        <div class="login-links-2">
+            <a href="/create-account">Create an Account</a>
+            <a href="/">Back</a>
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>
