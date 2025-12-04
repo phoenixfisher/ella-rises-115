@@ -5,33 +5,55 @@ const { requireRole } = require("../middleware/auth");
 const router = express.Router();
 
 // ==============================================
-// 1. READ: View All Surveys
+// 1. READ: View All Surveys (With Filters)
 // ==============================================
 router.get("/surveys", requireRole(["M"]), async (req, res) => {
     try {
-        // Join with participants and events to show readable names
-        const surveys = await db("surveys")
+        // 1. Get filter parameters from URL
+        const { date, event, score, nps } = req.query;
+
+        // 2. Start building the main query
+        let query = db("surveys")
             .join("participants", "surveys.participantid", "participants.participantid")
             .join("eventoccurrences", "surveys.eventoccurrenceid", "eventoccurrences.eventoccurrenceid")
             .join("events", "eventoccurrences.eventid", "events.eventid")
             .select(
                 "surveys.surveyid",
-                "surveys.surveysatisfactionscore",
-                "surveys.surveyusefulnessscore",
-                "surveys.surveyinstructorscore",
-                "surveys.surveyrecommendationscore",
                 "surveys.surveyoverallscore",
                 "surveys.surveynpsbucket",
-                "surveys.surveycomments",
                 "participants.participantfirstname",
                 "participants.participantlastname",
                 "events.eventname",
+                "events.eventid",
                 "eventoccurrences.eventdatetimestart"
-            )
-            .orderBy("surveys.surveyid", "desc");
+            );
+
+        // 3. Apply Filters if they exist
+        if (date) {
+            // Compare just the YYYY-MM-DD part
+            query.whereRaw("DATE(eventoccurrences.eventdatetimestart) = ?", [date]);
+        }
+        if (event) {
+            query.where("events.eventid", event);
+        }
+        if (score) {
+            // Filter for scores greater than or equal to the selection
+            query.where("surveys.surveyoverallscore", ">=", score);
+        }
+        if (nps) {
+            query.where("surveys.surveynpsbucket", nps);
+        }
+
+        // Execute Survey Query
+        const surveys = await query.orderBy("surveys.surveyid", "desc");
+
+        // 4. Fetch Events List for the Filter Dropdown
+        const eventsList = await db("events").select("eventid", "eventname").orderBy("eventname");
 
         res.render("surveys/surveys", {
             surveys,
+            eventsList, // Pass list for dropdown
+            filters: req.query, // Pass current filters back to view (to keep inputs filled)
             user: req.session.user,
             userLevel: req.session.user.level
         });

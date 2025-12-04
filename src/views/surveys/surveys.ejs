@@ -10,6 +10,64 @@
                 </button>
             </form>
         </div>
+        <form action="/surveys" method="GET" style="background-color: #fff; padding: 24px; border-radius: 12px; border: 1px solid var(--pink-light); margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <h4 style="margin: 0 0 20px 0; color: var(--rose-deep); font-size: 1.1rem;">Filter Responses</h4>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; align-items: end;">
+                
+                <div>
+                    <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 8px;">Date</label>
+                    <input type="date" name="date" value="<%= filters.date || '' %>" 
+                           style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 8px;">Event</label>
+                    <select name="event" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background-color: white;">
+                        <option value="">All Events</option>
+                        <% eventsList.forEach(e => { %>
+                            <option value="<%= e.eventid %>" <%= filters.event == e.eventid ? 'selected' : '' %>>
+                                <%= e.eventname %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 8px;">Min Score</label>
+                    <select name="score" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background-color: white;">
+                        <option value="">Any Score</option>
+                        <option value="5" <%= filters.score == '5' ? 'selected' : '' %>>5.0 Only</option>
+                        <option value="4" <%= filters.score == '4' ? 'selected' : '' %>>4.0+</option>
+                        <option value="3" <%= filters.score == '3' ? 'selected' : '' %>>3.0+</option>
+                        <option value="2" <%= filters.score == '2' ? 'selected' : '' %>>2.0+</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 8px;">NPS Bucket</label>
+                    <select name="nps" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background-color: white;">
+                        <option value="">All Buckets</option>
+                        <option value="Promoter" <%= filters.nps == 'Promoter' ? 'selected' : '' %>>Promoter</option>
+                        <option value="Passive" <%= filters.nps == 'Passive' ? 'selected' : '' %>>Passive</option>
+                        <option value="Detractor" <%= filters.nps == 'Detractor' ? 'selected' : '' %>>Detractor</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" style="flex: 1; padding: 12px; background-color: var(--lavender); color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; transition: background-color 0.2s;">
+                        Filter
+                    </button>
+                    <% if (filters.date || filters.event || filters.score || filters.nps) { %>
+                        <a href="/surveys" style="text-decoration: none; flex: 1;">
+                            <button type="button" style="width: 100%; padding: 12px; background-color: #e9ecef; color: var(--charcoal); border: none; border-radius: 6px; font-weight: 700; cursor: pointer; transition: background-color 0.2s;">
+                                Clear
+                            </button>
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        </form>
 
         <% if (surveys.length === 0) { %>
             <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba;">
