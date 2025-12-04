@@ -1,0 +1,84 @@
+<div class="landing">
+    <div class="hero-panel" style="max-width: 800px; margin: 0 auto;">
+        
+        <h2 style="color: var(--charcoal); margin-top: 0; margin-bottom: 2rem; border-bottom: 2px solid var(--pink-light); padding-bottom: 1rem;">
+            <%= userLevel === 'M' ? 'Add New Survey Response' : 'Leave an Event Review' %>
+        </h2>
+
+        <% if (typeof error_message !== 'undefined' && error_message) { %>
+            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                <%= error_message %>
+            </div>
+        <% } %>
+
+        <form action="/addSurvey" method="post">
+            
+            <h4 style="color: var(--rose-deep); margin-bottom: 1rem;">Event Details</h4>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div>
+                    <label for="eventoccurrenceid" style="display: block; margin-bottom: 0.5rem;">Select Event</label>
+                    <select id="eventoccurrenceid" name="eventoccurrenceid" required style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                        <option value="">-- Choose an Event --</option>
+                        <% events.forEach(e => { %>
+                            <option value="<%= e.eventoccurrenceid %>">
+                                <%= e.eventname %> (<%= new Date(e.eventdatetimestart).toLocaleDateString() %>)
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div>
+                    <label for="participantid" style="display: block; margin-bottom: 0.5rem;">
+                        <%= userLevel === 'M' ? 'Select Participant' : 'Your Name' %>
+                    </label>
+                    <select id="participantid" name="participantid" required style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                        <option value="">-- Choose Name --</option>
+                        <% participants.forEach(p => { %>
+                            <option value="<%= p.participantid %>">
+                                <%= p.participantlastname %>, <%= p.participantfirstname %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+
+            <h4 style="color: var(--rose-deep); margin-bottom: 1rem; border-top: 1px solid #eee; padding-top: 1.5rem;">Ratings (1-5)</h4>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 1.5rem;">1 = Poor, 5 = Excellent</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                <% const categories = [
+                    { id: 'surveysatisfactionscore', label: 'Satisfaction' },
+                    { id: 'surveyusefulnessscore', label: 'Usefulness' },
+                    { id: 'surveyinstructorscore', label: 'Instructor' },
+                    { id: 'surveyrecommendationscore', label: 'Recommend?' }
+                ]; %>
+
+                <% categories.forEach(cat => { %>
+                    <div>
+                        <label for="<%= cat.id %>" style="display: block; margin-bottom: 0.5rem; font-weight: 500;"><%= cat.label %></label>
+                        <input type="number" id="<%= cat.id %>" name="<%= cat.id %>" min="1" max="5" required 
+                               style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                    </div>
+                <% }) %>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label for="surveycomments" style="display: block; margin-bottom: 0.5rem;">Comments & Feedback</label>
+                <textarea id="surveycomments" name="surveycomments" rows="4" 
+                          style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-family: inherit;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 15px; border-top: 2px solid var(--pink-light); padding-top: 1.5rem;">
+                <a href="/surveys" style="flex: 1; text-align: center;">
+                    <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal);">Cancel</button>
+                </a>
+                <div style="flex: 1;">
+                    <button type="submit" style="width: 100%; padding: 12px; background: var(--rose-deep); color: white;">
+                        Submit Review
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

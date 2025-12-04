@@ -1,0 +1,83 @@
+<div class="landing">
+    <div class="hero-panel" style="max-width: 800px; margin: 0 auto;">
+        
+        <h2 style="color: var(--charcoal); margin-top: 0; margin-bottom: 2rem; border-bottom: 2px solid var(--pink-light); padding-bottom: 1rem;">
+            Edit Survey Response
+        </h2>
+
+        <% if (typeof error_message !== 'undefined' && error_message) { %>
+            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                <%= error_message %>
+            </div>
+        <% } %>
+
+        <form action="/editSurvey/<%= survey.surveyid %>" method="post">
+            
+            <h4 style="color: var(--rose-deep); margin-bottom: 1rem;">Event Details</h4>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div>
+                    <label for="eventoccurrenceid" style="display: block; margin-bottom: 0.5rem;">Select Event</label>
+                    <select id="eventoccurrenceid" name="eventoccurrenceid" required style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                        <% events.forEach(e => { %>
+                            <option value="<%= e.eventoccurrenceid %>" <%= survey.eventoccurrenceid === e.eventoccurrenceid ? 'selected' : '' %>>
+                                <%= e.eventname %> (<%= new Date(e.eventdatetimestart).toLocaleDateString() %>)
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div>
+                    <label for="participantid" style="display: block; margin-bottom: 0.5rem;">Select Participant</label>
+                    <select id="participantid" name="participantid" required style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                        <% participants.forEach(p => { %>
+                            <option value="<%= p.participantid %>" <%= survey.participantid === p.participantid ? 'selected' : '' %>>
+                                <%= p.participantlastname %>, <%= p.participantfirstname %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+
+            <h4 style="color: var(--rose-deep); margin-bottom: 1rem; border-top: 1px solid #eee; padding-top: 1.5rem;">Ratings (1-5)</h4>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label for="surveysatisfactionscore" style="display: block; margin-bottom: 0.5rem;">Satisfaction</label>
+                    <input type="number" id="surveysatisfactionscore" name="surveysatisfactionscore" min="1" max="5" value="<%= survey.surveysatisfactionscore %>" required 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                </div>
+                <div>
+                    <label for="surveyusefulnessscore" style="display: block; margin-bottom: 0.5rem;">Usefulness</label>
+                    <input type="number" id="surveyusefulnessscore" name="surveyusefulnessscore" min="1" max="5" value="<%= survey.surveyusefulnessscore %>" required 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                </div>
+                <div>
+                    <label for="surveyinstructorscore" style="display: block; margin-bottom: 0.5rem;">Instructor</label>
+                    <input type="number" id="surveyinstructorscore" name="surveyinstructorscore" min="1" max="5" value="<%= survey.surveyinstructorscore %>" required 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                </div>
+                <div>
+                    <label for="surveyrecommendationscore" style="display: block; margin-bottom: 0.5rem;">Recommend?</label>
+                    <input type="number" id="surveyrecommendationscore" name="surveyrecommendationscore" min="1" max="5" value="<%= survey.surveyrecommendationscore %>" required 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label for="surveycomments" style="display: block; margin-bottom: 0.5rem;">Comments</label>
+                <textarea id="surveycomments" name="surveycomments" rows="4" 
+                          style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-family: inherit;"><%= survey.surveycomments %></textarea>
+            </div>
+
+            <div style="display: flex; gap: 15px; border-top: 2px solid var(--pink-light); padding-top: 1.5rem;">
+                <a href="/surveys" style="flex: 1; text-align: center;">
+                    <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal);">Cancel</button>
+                </a>
+                <div style="flex: 1;">
+                    <button type="submit" style="width: 100%; padding: 12px; background: var(--rose-deep); color: white;">Save Changes</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

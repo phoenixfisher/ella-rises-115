@@ -1,0 +1,88 @@
+<div class="landing">
+    <div class="hero-panel" style="max-width: 1100px; margin: 0 auto;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="color: var(--charcoal); margin: 0;">Survey Responses</h2>
+            
+            <form action="/addSurvey" method="GET" style="margin: 0;">
+                <button type="submit" style="background-color: var(--rose-deep); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                    <%= userLevel === 'M' ? 'Add Survey Entry' : 'Leave a Review' %>
+                </button>
+            </form>
+        </div>
+
+        <% if (surveys.length === 0) { %>
+            <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba;">
+                No survey responses found.
+            </div>
+        <% } else { %>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Event</th>
+                            <th>Participant</th>
+                            <th>Overall</th>
+                            <th>NPS</th>
+                            <% if (userLevel === 'M') { %>
+                                <th>Actions</th>
+                            <% } %>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% surveys.forEach(survey => { %>
+                            <tr>
+                                <td>
+                                    <%= new Date(survey.eventdatetimestart).toLocaleDateString() %>
+                                </td>
+                                <td style="font-weight: 600; color: var(--charcoal);">
+                                    <%= survey.eventname %>
+                                </td>
+                                <td>
+                                    <%= survey.participantfirstname %> <%= survey.participantlastname %>
+                                </td>
+                                <td>
+                                    <% const score = Number(survey.surveyoverallscore).toFixed(1); %>
+                                    <span style="font-weight: bold; color: <%= score >= 4 ? '#28a745' : (score >= 3 ? '#ffc107' : '#dc3545') %>;">
+                                        <%= score %> / 5.0
+                                    </span>
+                                </td>
+                                <td>
+                                    <% 
+                                        let badgeColor = '#6c757d'; // Default gray
+                                        if (survey.surveynpsbucket === 'Promoter') badgeColor = '#28a745';
+                                        if (survey.surveynpsbucket === 'Passive') badgeColor = '#ffc107'; // Yellow/Orange
+                                        if (survey.surveynpsbucket === 'Detractor') badgeColor = '#dc3545';
+                                    %>
+                                    <span style="background-color: <%= badgeColor %>; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">
+                                        <%= survey.surveynpsbucket %>
+                                    </span>
+                                </td>
+                                
+                                <% if (userLevel === 'M') { %>
+                                    <td>
+                                        <div style="display: flex; gap: 10px;">
+                                            <a href="/editSurvey/<%= survey.surveyid %>">
+                                                <button style="margin: 0; padding: 5px 10px; background-color: var(--blue-soft); font-size: 0.85rem;">Edit</button>
+                                            </a>
+                                            <form action="/deleteSurvey/<%= survey.surveyid %>" method="POST" onsubmit="return confirm('Delete this survey?');" style="margin: 0;">
+                                                <button type="submit" style="margin: 0; padding: 5px 10px; background-color: #dc3545; font-size: 0.85rem;">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                <% } %>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+
+        <div style="margin-top: 2rem; border-top: 2px solid var(--pink-light); padding-top: 1rem;">
+            <a href="/" style="text-decoration: none;">
+                <button type="button" style="background-color: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">Back to Home</button>
+            </a>
+        </div>
+    </div>
+</div>

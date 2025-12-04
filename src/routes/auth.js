@@ -7,7 +7,13 @@ const router = express.Router();
 
 // Default route → landing page
 router.get("/", (req, res) => {
-    res.render("landing", { error_message: "" });
+    // Check if there is a message in the query string (e.g. from survey submission)
+    const messages = req.query.message ? [req.query.message] : [];
+    
+    res.render("landing", { 
+        error_message: "",
+        messages: messages // Pass to layout.ejs
+    });
 });
 
 // Optional login route (same page)
