@@ -242,7 +242,7 @@ app.get("/users", requireRole(["M"]), (req, res) => {
         .from("users")
         .then(users => {
             console.log(`Successfully retrieved ${users.length} users from database`);
-            res.render("displayUsers", {
+            res.render("users/displayUsers", {
                 users: users,
                 userLevel: req.session.user.level,
                 user: req.session.user
@@ -250,7 +250,7 @@ app.get("/users", requireRole(["M"]), (req, res) => {
         })
         .catch((err) => {
             console.error("Database query error:", err.message);
-            res.render("displayUsers", {
+            res.render("users/displayUsers", {
                 users: [],
                 error_message: `Database error: ${err.message}`
             });
@@ -259,7 +259,7 @@ app.get("/users", requireRole(["M"]), (req, res) => {
 
 // Routes for adding a user
 app.get("/addUser", (req, res) => {
-    res.render("addUser");
+    res.render("users/addUser");
 });
 
 // Handle form submission for adding a user
@@ -267,7 +267,7 @@ app.post("/addUser", async (req, res) => {
     const { username, password, level } = req.body;
 
     if (!username || !password) {
-        return res.status(400).render("addUser", { error_message: "Username and password are required." });
+        return res.status(400).render("users/addUser", { error_message: "Username and password are required." });
     }
 
     try {
@@ -286,7 +286,7 @@ app.post("/addUser", async (req, res) => {
 
     } catch (dbErr) {
         console.error("Error inserting user:", dbErr.message);
-        res.status(500).render("addUser", { error_message: "Unable to save user. Please try again." });
+        res.status(500).render("users/addUser", { error_message: "Unable to save user. Please try again." });
     }
 });
 
@@ -312,18 +312,18 @@ app.get("/editUser/:id", (req, res) => {
     .first()
     .then((user) => {
         if (!user) {
-            return res.status(404).render("displayUsers", {
+            return res.status(404).render("users/displayUsers", {
                 users: [],
                 userLevel: req.session.user.level,
                 error_message: "User not found."
             });
         }
 
-        res.render("editUser", { user, error_message: "" });
+        res.render("users/editUser", { user, error_message: "" });
     })
     .catch((err) => {
         console.error("Database query error:", err.message);
-        res.status(500).render("displayUsers", {
+        res.status(500).render("users/displayUsers", {
             users: [],
             userLevel: req.session.user.level,
             error_message: `Database error: ${err.message}.`
@@ -343,19 +343,19 @@ app.post("/editUser/:id", async (req, res) => {
         try {
             const user = await knex("users").where({ id: id }).first();
             if (!user) {
-                return res.status(404).render("displayUsers", {
+                return res.status(404).render("users/displayUsers", {
                     users: [],
                     userLevel: req.session.user.level,
                     error_message: "User not found."
                 });
             }
-            return res.status(400).render("editUser", {
+            return res.status(400).render("users/editUser", {
                 user,
                 error_message: "Username is required."
             });
         } catch (err) {
             console.error("Error fetching user:", err.message);
-            return res.status(500).render("displayUsers", {
+            return res.status(500).render("users/displayUsers", {
                 users: [],
                 userLevel: req.session.user.level,
                 error_message: "Unable to load user for editing."
@@ -381,7 +381,7 @@ app.post("/editUser/:id", async (req, res) => {
         const rowsUpdated = await knex("users").where({ id: id }).update(updatedUser);
 
         if (rowsUpdated === 0) {
-            return res.status(404).render("displayUsers", {
+            return res.status(404).render("users/displayUsers", {
                 users: [],
                 userLevel: req.session.user.level,
                 error_message: "User not found."
@@ -395,19 +395,19 @@ app.post("/editUser/:id", async (req, res) => {
         try {
             const user = await knex("users").where({ id: id }).first();
             if (!user) {
-                return res.status(404).render("displayUsers", {
+                return res.status(404).render("users/displayUsers", {
                     users: [],
                     userLevel: req.session.user.level,
                     error_message: "User not found."
                 });
             }
-            res.status(500).render("editUser", {
+            res.status(500).render("users/editUser", {
                 user,
                 error_message: "Unable to update user. Please try again."
             });
         } catch (fetchErr) {
             console.error("Error fetching user after failure:", fetchErr.message);
-            res.status(500).render("displayUsers", {
+            res.status(500).render("users/displayUsers", {
                 users: [],
                 userLevel: req.session.user.level,
                 error_message: "Unable to update user."
@@ -433,7 +433,7 @@ app.get("/events", async (req, res) => {
             )
             .orderBy("eventoccurrences.eventdatetimestart", "asc"); // Show soonest events first
 
-        res.render("events", { 
+        res.render("events/events", { 
             events: eventList,
             user: req.session.user // Passing user for the layout
         });
@@ -450,7 +450,7 @@ app.get("/addEvent", (req, res) => {
         return res.redirect("/login");
     }
 
-    res.render("addEvent", {
+    res.render("events/addEvent", {
         user: req.session.user
     });
 });
@@ -483,7 +483,7 @@ app.get("/editEvent/:id", async (req, res) => {
             return res.status(404).send("Event not found");
         }
 
-        res.render("editEvent", {
+        res.render("events/editEvent", {
             event: eventToEdit,
             user: req.session.user
         });
@@ -617,7 +617,7 @@ app.get("/donations", async (req, res) => {
             )
             .orderByRaw("d.donationdate IS NULL ASC, d.donationdate DESC");
 
-        res.render("donations", {     
+        res.render("donations/donations", {     
             donations,
             user: req.session.user || null
         });
@@ -661,7 +661,7 @@ app.get("/editDonation/:donationid", async (req, res) => {
             return res.send("Donation not found");
         }
 
-        res.render("editDonation", {
+        res.render("donations/editDonation", {
             donation,
             user: req.session.user || null
         });
@@ -700,7 +700,7 @@ app.post("/editDonation/:donationid", async (req, res) => {
 // =========================
 app.get("/addDonation", async (req, res) => {
     try {
-        res.render("addDonation", {
+        res.render("donations/addDonation", {
             user: req.session.user || null
         });
     } catch (err) {
