@@ -33,13 +33,13 @@
 
                 <% if (user && user.level === 'M') { %>
                     <td>
-                        <a href="/editDonation/<%= d.id %>">
+                        <a href="/editDonation/<%= d.donationid %>">
                             <button>Edit</button>
                         </a>
                     </td>
 
                     <td>
-                        <a href="/deleteDonation/<%= d.id %>"
+                        <a href="/deleteDonation/<%= d.donationid %>"
                            onclick="return confirm('Are you sure you want to delete this donation?');">
                             <button>Delete</button>
                         </a>

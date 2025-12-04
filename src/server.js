@@ -595,17 +595,17 @@ app.post('/deleteEvent/:id', async (req, res) => {
 // Display Donations
 // =========================
 app.get("/donations", async (req, res) => {
-
     try {
         const donations = await knex("donations as d")
-        .join("participants as p", "d.participantid", "p.participantid")
-        .select(
-        "p.participantfirstname",
-        "p.participantlastname",
-        "d.donationdate",
-        "d.donationamount"
-    )
-    .orderByRaw("d.donationdate IS NULL ASC, d.donationdate DESC")
+            .leftJoin("participants as p", "d.participantid", "p.participantid") // <-- safer join
+            .select(
+                "d.donationid",
+                "p.participantfirstname",
+                "p.participantlastname",
+                "d.donationdate",
+                "d.donationamount"
+            )
+            .orderByRaw("d.donationdate IS NULL ASC, d.donationdate DESC");
 
         res.render("donations", {     
             donations,
@@ -621,8 +621,20 @@ app.get("/donations", async (req, res) => {
 // =========================
 // Delete Donations
 // =========================
+app.get("/deleteDonation/:donationid", async (req, res) => {
+    const donationid = req.params.donationid;  // <-- FIXED
 
+    try {
+        await knex("donations")
+            .where("donationid", donationid)
+            .del();
 
+        res.redirect("/donations");
+    } catch (err) {
+        console.error(err);
+        res.send("Error deleting donation");
+    }
+});
 
 
 
