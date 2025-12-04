@@ -460,11 +460,19 @@ app.get("/displayParticipant/:id", requireRole(["M"]), (req, res) => {
                     error_message: "Participant not found."
                 });
             }
-            res.render("participants/displayParticipant", {
-                participant: participant,
-                userLevel: req.session.user.level,
-                user: req.session.user
-            });
+            return knex("milestones")
+                .select("milestonetitle", "milestonedate", "milestoneid")
+                .where({ participantid })
+                .orderBy("milestonedate", "desc")
+                .then((milestones) => {
+                    res.render("participants/displayParticipant", {
+                        participant: participant,
+                        milestones,
+                        userLevel: req.session.user.level,
+                        user: req.session.user,
+                        backLink: "/participants"
+                    });
+                });
         })
         .catch((err) => {
             console.error("Error fetching participant details:", err.message);
@@ -596,6 +604,58 @@ app.post("/deleteParticipant/:id", (req, res) => {
         console.log(err);
         res.status(500).json({err});
     })
+});
+
+// =========================
+// MILESTONES
+// =========================
+app.get("/milestones", requireRole(["M"]), async (req, res) => {
+    try {
+        const milestones = await knex("milestones")
+            .select("milestonetitle")
+            .count("* as milestonecount")
+            .countDistinct("participantid as participantcount")
+            .groupBy("milestonetitle")
+            .orderBy("milestonetitle", "asc");
+
+        res.render("milestones/milestones", {
+            milestones,
+            user: req.session.user
+        });
+    } catch (err) {
+        console.error("Error fetching milestones:", err);
+        res.status(500).send("Error loading milestones");
+    }
+});
+
+// Milestone detail: list participants who earned it
+app.get("/milestones/:title", requireRole(["M"]), async (req, res) => {
+    const title = req.params.title;
+    try {
+        const milestoneRows = await knex("milestones as m")
+            .leftJoin("participants as p", "m.participantid", "p.participantid")
+            .select(
+                "m.milestoneid",
+                "m.milestonetitle",
+                "m.milestonedate",
+                "p.participantid",
+                "p.participantfirstname",
+                "p.participantlastname",
+                "p.participantemail"
+            )
+            .where("m.milestonetitle", title)
+            .orderBy("m.milestonedate", "desc");
+
+        res.render("milestones/milestoneDetail", {
+            title,
+            milestones: milestoneRows,
+            participantCount: new Set(milestoneRows.map(m => m.participantid)).size,
+            user: req.session.user
+        });
+    } catch (err) {
+        console.error("Error fetching milestone detail:", err);
+        res.status(500).send("Error loading milestone detail");
+    }
 });
 
 // Route for viewing events

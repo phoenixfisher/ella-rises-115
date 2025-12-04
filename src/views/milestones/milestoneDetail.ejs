@@ -1,0 +1,56 @@
+<div class="landing">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <a href="/milestones" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--pink-light); border-radius: 10px; color: var(--charcoal); background: var(--cream); font-weight: 700; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+            ← Back to Milestones
+        </a>
+        <div style="text-align: right; flex: 1;">
+            <h1 style="margin: 0;"><%= title %></h1>
+            <p style="margin: 6px 0 0 0; color: var(--charcoal); opacity: 0.8;">
+                <strong style="color: var(--rose-deep); font-size: 1.05rem;"><%= participantCount %></strong> participant<%= participantCount === 1 ? '' : 's' %> completed this milestone.
+            </p>
+        </div>
+    </div>
+
+    <% if (!milestones || milestones.length === 0) { %>
+        <div class="hero-panel" style="padding: 24px; border: 1px solid var(--pink-light);">
+            No participants have completed this milestone yet.
+        </div>
+    <% } else { %>
+        <div class="hero-panel" style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; color: var(--charcoal);">
+                <thead>
+                    <tr style="text-align: left; border-bottom: 1px solid var(--pink-light);">
+                        <th style="padding: 10px;">Participant</th>
+                        <th style="padding: 10px;">Email</th>
+                        <th style="padding: 10px;">Completed On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% milestones.forEach(ms => { %>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px; font-weight: 600;">
+                                <a href="/displayParticipant/<%= ms.participantid %>" style="color: var(--charcoal); text-decoration: none;">
+                                    <%= ms.participantfirstname %> <%= ms.participantlastname %>
+                                </a>
+                            </td>
+                            <td style="padding: 10px;">
+                                <% if (ms.participantemail) { %>
+                                    <a href="mailto:<%= ms.participantemail %>" style="color: var(--lavender);"><%= ms.participantemail %></a>
+                                <% } else { %>
+                                    <span style="opacity: 0.6;">—</span>
+                                <% } %>
+                            </td>
+                            <td style="padding: 10px;">
+                                <% if (ms.milestonedate) { %>
+                                    <%= new Date(ms.milestonedate).toLocaleDateString() %>
+                                <% } else { %>
+                                    <span style="opacity: 0.6;">—</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>
