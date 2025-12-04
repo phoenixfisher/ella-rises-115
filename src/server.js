@@ -263,25 +263,31 @@ app.get("/addUser", (req, res) => {
 });
 
 // Handle form submission for adding a user
-app.post("/addUser", (req, res) => {
+app.post("/addUser", async (req, res) => {
     const { username, password, level } = req.body;
+
     if (!username || !password) {
         return res.status(400).render("addUser", { error_message: "Username and password are required." });
     }
-    const newUser = {
-        username,
-        password,
-        level
-    };
-    knex("users")
-        .insert(newUser)
-        .then(() => {
-            res.redirect("/users");
-        })
-        .catch((dbErr) => {
-            console.error("Error inserting user:", dbErr.message);
-            res.status(500).render("addUser", { error_message: "Unable to save user. Please try again." });
-        });
+
+    try {
+        // Security: Hash the password before creating the user
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const newUser = {
+            username,
+            password: hashedPassword, // Store the hash, not the plain text
+            level
+        };
+
+        await knex("users").insert(newUser);
+        res.redirect("/users");
+
+    } catch (dbErr) {
+        console.error("Error inserting user:", dbErr.message);
+        res.status(500).render("addUser", { error_message: "Unable to save user. Please try again." });
+    }
 });
 
 
@@ -328,82 +334,86 @@ app.get("/editUser/:id", (req, res) => {
 
 
 // Handle form submission for editing a user
-app.post("/editUser/:id", (req, res) => {
+app.post("/editUser/:id", async (req, res) => {
     const id = req.params.id;
     const { username, password, level } = req.body;
 
-    if (!username || !password) {
-        return knex("users")
-            .where({ id: id })
-            .first()
-            .then((user) => {
-                if (!user) {
-                    return res.status(404).render("displayUsers", {
-                        users: [],
-                        userLevel: req.session.user.level,
-                        error_message: "User not found."
-                    });
-                }
-                res.status(400).render("editUser", {
-                    user,
-                    error_message: "Username and password are required."
-                });
-            })
-            .catch((err) => {
-                console.error("Error fetching user:", err.message);
-                res.status(500).render("displayUsers", {
-                    users: [],
-                    userLevel: req.session.user.level,
-                    error_message: "Unable to load user for editing."
-                });
-            });
-    }
-    const updatedUser = {
-        username,
-        password,
-        level
-    };
-    
-    knex("users")
-        .where({ id: id })
-        .update(updatedUser)
-        .then((rowsUpdated) => {
-            if (rowsUpdated === 0) {
+    // 1. Validation: Check if username exists
+    if (!username) {
+        try {
+            const user = await knex("users").where({ id: id }).first();
+            if (!user) {
                 return res.status(404).render("displayUsers", {
                     users: [],
                     userLevel: req.session.user.level,
                     error_message: "User not found."
                 });
             }
-            res.redirect("/users");
-        })
-        .catch((err) => {
-            console.error("Error updating user:", err.message);
-            knex("users")
-                .where({ id: id })
-                .first()
-                .then((user) => {
-                    if (!user) {
-                        return res.status(404).render("displayUsers", {
-                            users: [],
-                            userLevel: req.session.user.level,
-                            error_message: "User not found."
-                        });
-                    }
-                    res.status(500).render("editUser", {
-                        user,
-                        error_message: "Unable to update user. Please try again."
-                    });
-                })
-                .catch((fetchErr) => {
-                    console.error("Error fetching user after update failure:", fetchErr.message);
-                    res.status(500).render("displayUsers", {
-                        users: [],
-                        userLevel: req.session.user.level,
-                        error_message: "Unable to update user."
-                    });
+            return res.status(400).render("editUser", {
+                user,
+                error_message: "Username is required."
+            });
+        } catch (err) {
+            console.error("Error fetching user:", err.message);
+            return res.status(500).render("displayUsers", {
+                users: [],
+                userLevel: req.session.user.level,
+                error_message: "Unable to load user for editing."
+            });
+        }
+    }
+
+    // 2. Prepare the update object
+    const updatedUser = {
+        username,
+        level
+    };
+
+    // 3. Security: Hash the password IF it was provided
+    if (password && password.trim() !== "") {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        updatedUser.password = hashedPassword;
+    }
+
+    // 4. Update the database
+    try {
+        const rowsUpdated = await knex("users").where({ id: id }).update(updatedUser);
+
+        if (rowsUpdated === 0) {
+            return res.status(404).render("displayUsers", {
+                users: [],
+                userLevel: req.session.user.level,
+                error_message: "User not found."
+            });
+        }
+        res.redirect("/users");
+
+    } catch (err) {
+        console.error("Error updating user:", err.message);
+        // Error handling: fetch user again to re-render form
+        try {
+            const user = await knex("users").where({ id: id }).first();
+            if (!user) {
+                return res.status(404).render("displayUsers", {
+                    users: [],
+                    userLevel: req.session.user.level,
+                    error_message: "User not found."
                 });
-        });
+            }
+            res.status(500).render("editUser", {
+                user,
+                error_message: "Unable to update user. Please try again."
+            });
+        } catch (fetchErr) {
+            console.error("Error fetching user after failure:", fetchErr.message);
+            res.status(500).render("displayUsers", {
+                users: [],
+                userLevel: req.session.user.level,
+                error_message: "Unable to update user."
+            });
+        }
+    }
 });
 
 // Route for viewing events

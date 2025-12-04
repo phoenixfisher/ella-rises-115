@@ -1,41 +1,53 @@
-<div class="form-card">
-    <h2 class="text-center mb-4">Edit User</h2>
+<div class="landing">
+    <div class="hero-panel" style="max-width: 600px; margin: 0 auto;">
+        <h2 style="color: var(--charcoal); margin-top: 0; margin-bottom: 2rem;">Edit User</h2>
 
-    <% if (typeof error_message !== 'undefined' && error_message) { %>
-        <div class="alert alert-danger" role="alert">
-            <%= error_message %>
-        </div>
-    <% } %>
-        <!-- The user object is passed from the server containing user details -->
-    <form action="/editUser/<%= user.id %>" method="post">
-        
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>" required>
-        </div>
+        <% if (typeof error_message !== 'undefined' && error_message) { %>
+            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                <%= error_message %>
+            </div>
+        <% } %>
 
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="text" class="form-control" id="password" name="password" value="<%= user.password %>" required>
-        </div>
-
-        <div class="mb-4">
-            <label class="form-label d-block">Access Level:</label>
+        <form action="/editUser/<%= user.id %>" method="post">
             
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="level" id="user" value="U" <%= user.level === 'U' ? 'checked' : '' %>>
-                <label class="form-check-label" for="user">User</label>
+            <h4 style="color: var(--rose-deep); border-bottom: 2px solid var(--pink-light); padding-bottom: 10px; margin-bottom: 20px;">Account Details</h4>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="username" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Username</label>
+                <input type="text" id="username" name="username" value="<%= user.username %>" required 
+                       style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background: var(--white); font-size: 1rem;">
             </div>
 
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="level" id="manager" value="M" <%= user.level === 'M' ? 'checked' : '' %>>
-                <label class="form-check-label" for="manager">Manager</label>
+            <div style="margin-bottom: 1.5rem;">
+                <label for="password" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Password</label>
+                <!-- Changed type to password, removed value, removed required, added placeholder -->
+                <input type="password" id="password" name="password" placeholder="Leave blank to keep current password"
+                       style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background: var(--white); font-size: 1rem;">
             </div>
-        </div>
 
-        <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary btn-lg">Update User</button>
-            <a href="/users" class="btn btn-outline-secondary">Cancel</a>
-        </div>
-    </form>
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Access Level</label>
+                <div style="display: flex; gap: 20px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background: #fff;">
+                    <div style="display: flex; align-items: center;">
+                        <input type="radio" name="level" id="user" value="U" <%= user.level === 'U' ? 'checked' : '' %> style="margin-right: 8px; transform: scale(1.2);">
+                        <label for="user" style="margin: 0; cursor: pointer;">User</label>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <input type="radio" name="level" id="manager" value="M" <%= user.level === 'M' ? 'checked' : '' %> style="margin-right: 8px; transform: scale(1.2);">
+                        <label for="manager" style="margin: 0; cursor: pointer;">Manager</label>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 2rem;">
+                <a href="/users" style="flex: 1; text-align: center;">
+                    <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal); border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold;">Cancel</button>
+                </a>
+                <div style="flex: 1;">
+                    <button type="submit" style="width: 100%; padding: 12px; background: var(--rose-deep); color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold;">Update User</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
 </div>
