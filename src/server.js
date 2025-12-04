@@ -427,7 +427,7 @@ app.get("/participants", requireRole(["M"]), (req, res) => {
         .from("participants")
         .then(participants => {
             console.log(`Successfully retrieved ${participants.length} participants`);
-            res.render("participants", {
+            res.render("participants/participants", {
                 participants: participants,
                 userLevel: req.session.user.level,
                 user: req.session.user
@@ -435,7 +435,7 @@ app.get("/participants", requireRole(["M"]), (req, res) => {
         })
         .catch((err) => {
             console.error("Database query error:", err.message);
-            res.render("participants", {
+            res.render("participants/participants", {
                 participants: [],
                 userLevel: req.session.user ? req.session.user.level : null,
                 user: req.session.user, 
@@ -454,13 +454,13 @@ app.get("/displayParticipant/:id", requireRole(["M"]), (req, res) => {
         .first()
         .then((participant) => {
             if (!participant) {
-                return res.status(404).render("participants", {
+                return res.status(404).render("participants/participants", {
                     participants: [],
                     userLevel: req.session.user.level,
                     error_message: "Participant not found."
                 });
             }
-            res.render("displayParticipant", {
+            res.render("participants/displayParticipant", {
                 participant: participant,
                 userLevel: req.session.user.level,
                 user: req.session.user
@@ -475,7 +475,7 @@ app.get("/displayParticipant/:id", requireRole(["M"]), (req, res) => {
 // Routes for adding a new participant
 // GET: Show the empty form
 app.get("/addParticipant", requireRole(["M"]), (req, res) => {
-    res.render("addParticipant", {
+    res.render("participants/addParticipant", {
         userLevel: req.session.user.level,
         user: req.session.user
     });
@@ -493,7 +493,7 @@ app.post("/addParticipant", requireRole(["M"]), (req, res) => {
 
     // Basic validation
     if (!participantfirstname || !participantlastname || !participantemail) {
-        return res.status(400).render("addParticipant", {
+        return res.status(400).render("participants/addParticipant", {
             userLevel: req.session.user.level,
             error_message: "First Name, Last Name, and Email are required."
         });
@@ -518,7 +518,7 @@ app.post("/addParticipant", requireRole(["M"]), (req, res) => {
         })
         .catch((err) => {
             console.error("Error adding participant:", err.message);
-            res.status(500).render("addParticipant", {
+            res.status(500).render("participants/addParticipant", {
                 userLevel: req.session.user.level,
                 error_message: "Unable to add participant. Please try again."
             });
@@ -538,7 +538,7 @@ app.get("/editParticipant/:id", requireRole(["M"]), (req, res) => {
             if (!participant) {
                 return res.status(404).send("Participant not found");
             }
-            res.render("editParticipant", {
+            res.render("participants/editParticipant", {
                 participant: participant,
                 userLevel: req.session.user.level,
                 user: req.session.user
