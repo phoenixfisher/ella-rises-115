@@ -119,13 +119,13 @@ router.post("/addSurvey", async (req, res) => {
             surveycomments
         });
 
-        // --- NEW REDIRECT LOGIC ---
+        // Redirect with success flash
         if (userLevel === 'M') {
-            // Manager -> Back to Survey List
-            res.redirect("/surveys");
+            req.flash("success", "Survey created.");
+            res.redirect("/addSurvey");
         } else {
-            // Visitor/User -> Landing Page with Thank You message
-            res.redirect("/?message=Thank you for your feedback!");
+            req.flash("success", "Thank you for your feedback!");
+            res.redirect("/addSurvey");
         }
 
     } catch (err) {
@@ -228,10 +228,12 @@ router.post("/editSurvey/:id", requireRole(["M"]), async (req, res) => {
                 surveycomments
             });
 
+        req.flash("success", "Survey updated.");
         res.redirect("/surveys");
     } catch (err) {
         console.error("Error updating survey:", err);
-        res.status(500).send("Failed to update survey");
+        req.flash("error", "Failed to update survey.");
+        res.redirect(`/editSurvey/${surveyId}`);
     }
 });
 
@@ -243,10 +245,12 @@ router.post("/deleteSurvey/:id", requireRole(["M"]), async (req, res) => {
 
     try {
         await db("surveys").where("surveyid", surveyId).del();
+        req.flash("error", "Survey deleted.");
         res.redirect("/surveys");
     } catch (err) {
         console.error("Error deleting survey:", err);
-        res.status(500).send("Failed to delete survey");
+        req.flash("error", "Failed to delete survey.");
+        res.redirect("/surveys");
     }
 });
 

@@ -25,13 +25,15 @@
         <!-- Flash messages -->
         <% if (messages && Object.keys(messages).length > 0) { %>
             <div class="flash-container" aria-live="polite">
-                <% Object.keys(messages).forEach(type => { %>
-                    <% messages[type].forEach(msg => { %>
+                <% Object.keys(messages).forEach(type => {
+                    const list = Array.isArray(messages[type]) ? messages[type] : [messages[type]];
+                %>
+                    <% list.forEach(msg => { if (msg) { %>
                         <div class="flash <%= type %>">
                             <span class="flash-content"><%= msg %></span>
                             <button type="button" class="flash-close" aria-label="Close message">×</button>
                         </div>
-                    <% }) %>
+                    <% } }) %>
                 <% }) %>
             </div>
         <% } %>
