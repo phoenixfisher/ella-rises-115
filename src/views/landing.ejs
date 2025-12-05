@@ -1,193 +1,64 @@
 <% title = "Ella Rises"; %>
 
-<style>
-    .landing {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 40px 20px 60px;
-    }
-
-    .landing-hero {
-        background: linear-gradient(135deg, var(--cream), var(--pink-light));
-        border: 1px solid var(--pink-light);
-        border-radius: 18px;
-        box-shadow: 0 10px 26px var(--shadow-light);
-        padding: 40px;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 30px;
-        align-items: center;
-    }
-
-    .hero-copy h1 {
-        margin: 0 0 10px 0;
-        font-size: 2.4rem;
-    }
-
-    .hero-copy p {
-        margin: 0 0 18px 0;
-        color: var(--charcoal);
-    }
-
-    .hero-badge {
-        display: inline-block;
-        padding: 8px 14px;
-        border-radius: 999px;
-        background: var(--rose-deep);
-        color: var(--white);
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        margin-bottom: 12px;
-    }
-
-    .hero-actions {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 8px;
-    }
-
-    .hero-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 12px;
-        margin-top: 24px;
-    }
-
-    .stat {
-        background: var(--white);
-        border: 1px solid var(--pink-light);
-        border-radius: 12px;
-        padding: 14px;
-        text-align: center;
-        box-shadow: 0 4px 10px var(--shadow-light);
-    }
-
-    .stat strong {
-        display: block;
-        font-size: 1.4rem;
-        color: var(--rose-deep);
-    }
-
-    .hero-panel {
-        background: var(--white);
-        border-radius: 14px;
-        border: 1px solid var(--pink-light);
-        box-shadow: inset 0 0 0 1px rgba(255, 216, 209, 0.6), 0 8px 18px var(--shadow-light);
-        padding: 28px;
-    }
-
-    .hero-panel ul {
-        padding-left: 18px;
-        margin: 0;
-        color: var(--charcoal);
-        line-height: 1.6;
-    }
-
-    .pillar-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 18px;
-        margin: 30px 0;
-    }
-
-    .pillar-grid .card h3 {
-        margin-top: 0;
-    }
-
-    .cta-strip {
-        background: linear-gradient(135deg, var(--pink-mid), var(--rose-deep));
-        color: var(--white);
-        padding: 28px;
-        border-radius: 14px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 12px 26px var(--shadow-mid);
-    }
-
-    .cta-strip h2 {
-        margin: 0;
-        color: var(--white);
-    }
-
-    @media (max-width: 640px) {
-        .landing {
-            padding: 24px 14px 40px;
-        }
-
-        .landing-hero {
-            padding: 28px 20px;
-        }
-
-        .hero-copy h1 {
-            font-size: 2rem;
-        }
-    }
-</style>
-
-<main class="landing">
-    <section class="landing-hero">
-        <div class="hero-copy">
-            <span class="hero-badge">Ella Rises</span>
-            <h1>Empowering young women through mentorship and community.</h1>
-            <p>Ella Rises partners mentors, volunteers, and donors to create safe, skill-building spaces for girls. Join the movement and help amplify their confidence, creativity, and leadership.</p>
-            <div class="hero-actions">
-                <a class="btn btn-rose" href="/login">Join as a mentor</a>
-                <a class="btn btn-green" href="/events">See upcoming events</a>
-            </div>
-            <div class="hero-stats">
-                <div class="stat">
-                    <strong>250+</strong>
-                    Active mentors in our network
+<div class="landing-home">
+    <div class="landing-container">
+        <section class="landing-hero">
+            <div class="hero-copy">
+                <h1>Empowering young women through mentorship and community.</h1>
+                <p>Ella Rises partners mentors, volunteers, and donors to create safe, skill-building spaces for girls. Join the movement and help amplify their confidence, creativity, and leadership.</p>
+                
+                <div class="hero-actions">
+                    <a class="btn btn-rose" href="/login">Join as a mentor</a>
+                    <a class="btn btn-green" href="/events">See upcoming events</a>
                 </div>
-                <div class="stat">
-                    <strong>1,200</strong>
-                    Girls served across chapters
-                </div>
-                <div class="stat">
-                    <strong>98%</strong>
-                    Reported growth in confidence
+
+                <div style="display: flex; gap: 30px; margin-top: 40px; border-top: 1px solid var(--pink-light); padding-top: 20px;">
+                    <div>
+                        <strong style="font-size: 1.5rem; color: var(--rose-deep); display: block;">250+</strong>
+                        <span style="font-size: 0.85rem; font-weight: 500;">Active Mentors</span>
+                    </div>
+                    <div>
+                        <strong style="font-size: 1.5rem; color: var(--rose-deep); display: block;">1,200</strong>
+                        <span style="font-size: 0.85rem; font-weight: 500;">Girls Served</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="hero-panel">
-            <h3 class="text-rose">What we focus on</h3>
-            <ul>
-                <li>Weekly mentorship circles that uplift and listen.</li>
-                <li>Workshops in creativity, STEM, and personal leadership.</li>
-                <li>Community events that celebrate every milestone.</li>
-                <li>Scholarships and resources made possible by donors.</li>
-            </ul>
-        </div>
-    </section>
+            <div class="hero-panel">
+                <h3>What we focus on</h3>
+                <ul style="line-height: 2;">
+                    <li>Weekly mentorship circles that uplift.</li>
+                    <li>Workshops in creativity & STEM.</li>
+                    <li>Community events for every milestone.</li>
+                    <li>Scholarships made possible by donors.</li>
+                </ul>
+            </div>
+        </section>
 
-    <section class="pillar-grid">
-        <div class="card">
-            <h3>Mentor</h3>
-            <p>Share your experience and guide young women through their goals. We provide training, resources, and a supportive cohort.</p>
-        </div>
-        <div class="card">
-            <h3>Volunteer</h3>
-            <p>Help host events, prepare workshops, or support logistics. A few hours a month makes a visible impact.</p>
-        </div>
-        <div class="card">
-            <h3>Donate</h3>
-            <p>Fuel scholarships, supplies, and transportation so every girl can participate. Every contribution counts.</p>
-        </div>
-    </section>
+        <section class="pillar-grid">
+            <div class="card">
+                <h3>Mentor</h3>
+                <p>Share your experience and guide young women through their goals. We provide training, resources, and a supportive cohort.</p>
+            </div>
+            <div class="card">
+                <h3>Volunteer</h3>
+                <p>Help host events, prepare workshops, or support logistics. A few hours a month makes a visible impact.</p>
+            </div>
+            <div class="card">
+                <h3>Donate</h3>
+                <p>Fuel scholarships, supplies, and transportation so every girl can participate. Every contribution counts.</p>
+            </div>
+        </section>
 
-    <section class="cta-strip">
-        <div>
-            <h2>Ready to lift a girl today?</h2>
-            <p style="margin: 6px 0 0 0;">Create your account or explore events to see where you can plug in.</p>
-        </div>
-        <div class="hero-actions" style="margin: 0;">
-            <a class="btn btn-charcoal" href="/create-account">Create account</a>
-            <a class="btn btn-pink" href="/dashboard_public">View impact</a>
-        </div>
-    </section>
-</main>
+        <section class="cta-strip">
+            <div style="flex: 1;">
+                <h2>Ready to lift a girl today?</h2>
+                <p style="margin: 0; opacity: 0.9;">Create your account or explore events to see where you can plug in.</p>
+            </div>
+            <div class="hero-actions" style="margin: 0;">
+                <a class="btn btn-charcoal" href="/create-account">Create account</a>
+                <a class="btn" style="background-color: rgba(255,255,255,0.2); color: white;" href="/dashboard_public">View impact</a>
+            </div>
+        </section>
+    </div>
+</div>

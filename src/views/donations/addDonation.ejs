@@ -1,61 +1,61 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Donation</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
+<div class="landing">
+    <div class="hero-panel" style="max-width: 800px; margin: 0 auto;">
+        
+        <h2 style="color: var(--charcoal); margin-top: 0; margin-bottom: 2rem; border-bottom: 2px solid var(--pink-light); padding-bottom: 1rem;">
+            Record New Donation
+        </h2>
 
-<main class="login-container">
-    <h1>Add Donation</h1>
+        <% if (typeof error_message !== 'undefined' && error_message) { %>
+            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                <%= error_message %>
+            </div>
+        <% } %>
 
-    <form action="/addDonation" method="POST">
+        <form action="/addDonation" method="POST">
+            
+            <h4 style="color: var(--rose-deep); margin-bottom: 1rem;">Donor Details</h4>
 
-        <!-- First Name -->
-        <label for="firstname">First Name:</label>
-        <input
-            type="text"
-            name="firstname"
-            id="firstname"
-            required
-        >
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div>
+                    <label for="firstname" style="display: block; margin-bottom: 0.5rem;">First Name</label>
+                    <input type="text" id="firstname" name="firstname" required 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                </div>
+                <div>
+                    <label for="lastname" style="display: block; margin-bottom: 0.5rem;">Last Name</label>
+                    <input type="text" id="lastname" name="lastname" required 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                </div>
+            </div>
 
-        <!-- Last Name -->
-        <label for="lastname">Last Name:</label>
-        <input
-            type="text"
-            name="lastname"
-            id="lastname"
-            required
-        >
+            <h4 style="color: var(--rose-deep); margin-bottom: 1rem; border-top: 1px solid #eee; padding-top: 1.5rem;">Donation Information</h4>
 
-        <!-- Donation Date -->
-        <label for="donationdate">Donation Date:</label>
-        <input
-            type="date"
-            name="donationdate"
-            id="donationdate"
-            required
-        >
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div>
+                    <label for="donationdate" style="display: block; margin-bottom: 0.5rem;">Date</label>
+                    <input type="date" id="donationdate" name="donationdate" required 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                </div>
+                <div>
+                    <label for="donationamount" style="display: block; margin-bottom: 0.5rem;">Amount ($)</label>
+                    <input type="number" id="donationamount" name="donationamount" step="0.01" min="0" placeholder="0.00" required 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                </div>
+            </div>
 
-        <!-- Donation Amount -->
-        <label for="donationamount">Donation Amount ($):</label>
-        <input
-            type="number"
-            step="0.01"
-            name="donationamount"
-            id="donationamount"
-            required
-        >
+            <div style="display: flex; gap: 15px; border-top: 2px solid var(--pink-light); padding-top: 1.5rem;">
+                <a href="/donations" style="flex: 1; text-align: center;">
+                    <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal); border: none; border-radius: 8px; font-weight: bold;">
+                        Cancel
+                    </button>
+                </a>
+                <div style="flex: 1;">
+                    <button type="submit" style="width: 100%; padding: 12px; background: var(--rose-deep); color: white; border: none; border-radius: 8px; font-weight: bold;">
+                        Add Donation
+                    </button>
+                </div>
+            </div>
 
-        <button type="submit">Add Donation</button>
-    </form>
-
-    <!-- Back Button -->
-    <p style="margin-top: 1rem;">
-        <button onclick="history.back()" class="back-btn">Cancel</button>
-    </p>
-</main>
-
-</body>
-</html>
+        </form>
+    </div>
+</div>

@@ -1,3 +1,8 @@
+/* ================================
+   1. FONTS & VARIABLES
+================================ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
 :root {
     --blue-soft:     #99B7C6;
     --lavender:      #978EC4;
@@ -8,11 +13,14 @@
     --charcoal:      #3A3F3B;
     --coral:         #F4B092;
     --rose-deep:     #CE325B;
-    --white: #FFFFFF;
+    --white:         #FFFFFF;
+
+    --shadow-light:  0 4px 12px rgba(58, 63, 59, 0.08);
+    --shadow-mid:    0 8px 24px rgba(58, 63, 59, 0.12);
 }
 
 /* ================================
-   GLOBAL PAGE LAYOUT (Sticky Footer + Navbar)
+   2. GLOBAL PAGE LAYOUT
 ================================ */
 html, body {
     height: 100%;
@@ -23,97 +31,25 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    background: var(--cream);
-}
-
-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;             /* Ensures full width */
-    z-index: 1000;
-    
-    background-color: var(--white);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* Adds depth instead of a border */
-    
-    /* Layout */
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Pushes Brand to left, Links to right */
-    
-    padding: 10px 40px;      /* Horizontal spacing */
-    box-sizing: border-box;  /* Ensures padding doesn't break width */
-}
-
-/* Remove the old nav a:first-child rule if it exists */
-
-/* Logo and Brand Name */
-.nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--rose-deep);
-    font-family: "DM Serif Display", serif; /* Matches your headers */
-    font-size: 1.5rem;
-}
-
-.nav-brand img {
-    height: 45px; /* Adjust size as needed */
-    width: auto;
-    border-radius: 50%;
-}
-
-.nav-brand:hover {
-    color: var(--charcoal); /* Subtle hover effect */
-}
-
-/* Container for the links on the right */
-.nav-links {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-}
-
-/* Styling for the individual links */
-.nav-links a {
+    background-color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
     color: var(--charcoal);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: color 0.2s ease;
+    line-height: 1.6;
 }
 
-.nav-links a:hover {
-    color: var(--rose-deep);
-}
-
-.brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'DM Serif Display', serif;
+    font-weight: 400;
     color: var(--charcoal);
-    margin-right: auto;
-    text-decoration: none;
+    margin-bottom: 0.5em;
 }
 
-.brand-logo {
-    height: 36px;
-    width: auto;
-    object-fit: contain;
-    border-radius: 6px;
-}
-
-/* Push page content down so it isn't under navbar */
 .content {
     flex: 1;
-    padding-top: 70px; 
+    padding-top: 80px; /* Space for fixed navbar */
 }
 
-/* Footer sticks to bottom */
+/* Footer */
 footer {
     background-color: #f4f4f4;
     border-top: 1px solid #ccc;
@@ -124,523 +60,362 @@ footer {
 }
 
 /* ================================
-   Make Donations Styles
+   3. NAVBAR
 ================================ */
-.login-container {
-    width: 360px;
-    background: linear-gradient(135deg, var(--cream), var(--pink-light));
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-    border: 1px solid var(--pink-light);
-    text-align: center;
-    margin: auto; /* centers inside flex layout */
-    margin-top: 100px; /* clears navbar */
-}
-
-.login-container h1 {
-    color: var(--charcoal);
-    margin-bottom: 1.5rem;
-    font-family: "DM Serif Display", serif;
-}
-
-button.back-btn {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    color: var(--lavender);
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-button.back-btn:hover {
-    background: none;
-    color: var(--rose-deep);
-}
-
-
-/* ================================
-   FORM ELEMENTS
-================================ */
-label {
-    display: block;
-    text-align: left;
-    margin: 0.15rem 0 0.25rem;
-    color: var(--charcoal);
-    font-weight: 600;
-}
-
-input,
-select,
-textarea,
-.form-control {
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 8px 10px;
-    border: 2px solid var(--pink-light);
-    border-radius: 8px;
-    background: var(--white);
-    font-size: 1rem;
-    font-family: inherit;
+    z-index: 1000;
+    background-color: var(--white);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 40px;
     box-sizing: border-box;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: var(--lavender);
-    outline: none;
-    box-shadow: 0 0 6px rgba(151,142,196,0.3);
+/* FAILSAFE: This forces ANY image in the navbar to be small */
+nav img {
+    height: 45px !important; 
+    width: auto !important;
+    border-radius: 50%;
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 1.2rem;
-    background: var(--rose-deep);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.25s ease;
-}
-
-button:hover {
-    background: #b52a4f;
-}
-
-.error {
-    color: var(--rose-deep);
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-/* Form layout helpers */
-form {
-    display: grid;
-    gap: 10px;
-}
-
-.form-row {
-    display: grid;
-    gap: 8px;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.form-field {
+.nav-brand {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.form-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 6px;
-}
-
-.flash {
-    padding: 10px 14px;
-    border-radius: 8px;
-    margin: 6px 0;
-    font-weight: 600;
-    border: 1px solid transparent;
-}
-
-.flash.success {
-    background: #e6f5ec;
-    border-color: #9ad1af;
-    color: #2f7a47;
-}
-
-.flash.error {
-    background: #ffe9e9;
-    border-color: #f5b5b5;
-    color: #b02b2b;
-}
-
-.flash-container {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 2000;
-    max-width: 420px;
-    width: calc(100% - 40px);
-}
-
-.flash {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    transition: opacity 0.2s ease;
-    opacity: 1;
-}
-
-.flash.fade {
-    opacity: 0;
-}
-
-.flash-close {
-    background: none;
-    border: none;
-    color: inherit;
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 0;
-    width: 24px;
-    height: 24px;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 6px;
-    margin-top: 0;
-    align-self: center;
-}
-
-.flash-close:hover,
-.flash-close:focus {
-    color: inherit;
-    background: none;
-}
-
-/* ================================
-   LINKS
-================================ */
-a {
-    color: var(--lavender);
+    gap: 12px;
     text-decoration: none;
-    font-weight: 600;
-}
-
-a:hover {
     color: var(--rose-deep);
+    font-family: "DM Serif Display", serif;
+    font-size: 1.6rem;
 }
 
-
-
-/* ================================
-   LANDING PAGE
-================================ */
-.landing {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 40px 20px 60px;
-}
-
-.landing-hero {
-    background: linear-gradient(135deg, var(--cream), var(--pink-light));
-    border: 1px solid var(--pink-light);
-    border-radius: 18px;
-    box-shadow: 0 10px 26px var(--shadow-light);
-    padding: 40px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+.nav-links {
+    display: flex;
     gap: 30px;
     align-items: center;
 }
 
-.hero-copy h1 {
-    margin: 0 0 10px 0;
-    font-size: 2.4rem;
+.nav-links a {
+    color: var(--charcoal);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease;
 }
 
-.hero-copy p {
-    margin: 0 0 18px 0;
-    color: var(--charcoal);
+.nav-links a:hover {
+    color: var(--rose-deep);
+}
+/* ================================
+   4. LANDING PAGE & CONTAINERS
+================================ */
+
+/* A. Standard Container (For Events, Login, Participants, etc.) 
+   This relies on the body's 'cream' background color.
+*/
+.landing {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+    /* No background image here, so it shows the body's cream color */
+}
+
+/* B. Home Page Specific Container 
+   This applies ONLY to the main landing page with the image.
+*/
+.landing-home {
+    width: 100%;
+    margin: 0 auto;
+    
+    /* Pull background up behind navbar */
+    margin-top: -80px;      
+    padding: 120px 20px 60px; 
+    
+    /* Background Image Setup */
+    background-image: url('/images/landing-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Parallax effect */
+    
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Wrapper to center content inside the full-width home container */
+.landing-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+
+/* The Main Hero Card */
+.landing-hero {
+    /* 95% opacity white/pink gradient so text is readable */
+    background: linear-gradient(135deg, rgba(255,255,255,0.98) 30%, rgba(255, 216, 209, 0.95) 100%);
+    border: 1px solid rgba(255, 216, 209, 0.5);
+    border-radius: 24px;
+    padding: 60px;
+    
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 50px;
+    align-items: center;
+    
+    box-shadow: var(--shadow-mid);
+    margin-bottom: 60px;
+}
+
+.hero-copy h1 {
+    font-size: 3rem;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
 }
 
 .hero-badge {
     display: inline-block;
-    padding: 8px 14px;
-    border-radius: 999px;
+    padding: 6px 16px;
+    border-radius: 50px;
     background: var(--rose-deep);
     color: var(--white);
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
 }
 
 .hero-actions {
     display: flex;
-    gap: 12px;
+    gap: 15px;
     flex-wrap: wrap;
-    margin-top: 8px;
+    margin-top: 20px;
 }
 
-.hero-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    margin-top: 24px;
-}
-
-.stat {
-    background: var(--white);
-    border: 1px solid var(--pink-light);
-    border-radius: 12px;
-    padding: 14px;
-    text-align: center;
-    box-shadow: 0 4px 10px var(--shadow-light);
-}
-
-.stat strong {
-    display: block;
-    font-size: 1.4rem;
-    color: var(--rose-deep);
-}
-
+/* The "What We Focus On" Panel inside the Hero */
 .hero-panel {
-    background: var(--white);
-    border-radius: 14px;
-    border: 1px solid var(--pink-light);
-    box-shadow: inset 0 0 0 1px rgba(255, 216, 209, 0.6), 0 8px 18px var(--shadow-light);
-    padding: 28px;
+    background: rgba(255, 255, 255, 0.9); /* 90% opacity white */
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid rgba(0,0,0,0.03);
 }
 
-.hero-panel ul {
-    padding-left: 18px;
-    margin: 0;
-    color: var(--charcoal);
-    line-height: 1.6;
-}
-
-.pillar-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 18px;
-    margin: 30px 0;
-}
-
-.pillar-grid .card h3 {
+.hero-panel h3 {
+    color: var(--rose-deep);
     margin-top: 0;
 }
 
+.hero-panel ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+/* 3 Pillars Grid */
+.pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 60px 0;
+}
+
+/* The Individual Cards (Mentor, Volunteer, Donate) */
+.card {
+    background: rgba(255, 255, 255, 1); /* 95% opacity white */
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-light);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Bottom Call to Action Strip */
 .cta-strip {
-    background: linear-gradient(135deg, var(--pink-mid), var(--rose-deep));
+    background: var(--lavender);
     color: var(--white);
-    padding: 28px;
-    border-radius: 14px;
+    padding: 40px;
+    border-radius: 20px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 12px 26px var(--shadow-mid);
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: var(--shadow-mid);
 }
 
 .cta-strip h2 {
-    margin: 0;
     color: var(--white);
-}
-
-.cta-strip p {
-    margin: 6px 0 0 0;
-}
-
-.cta-strip .hero-actions {
     margin: 0;
 }
-
-@media (max-width: 640px) {
-    .landing {
-        padding: 24px 14px 40px;
-    }
-
-    .landing-hero {
-        padding: 28px 20px;
-    }
-
-    .hero-copy h1 {
-        font-size: 2rem;
-    }
-}
-
-
-.login-links {
-    margin-top: 1.5rem;
-    display: flex;
-    justify-content: space-between; /* pushes links to opposite sides */
-    width: 100%;                    /* match form width */
-}
-
-
 
 /* ================================
-   Display Pages
+   5. BUTTONS & FORMS
 ================================ */
-.styled-table {
+.btn, button {
+    font-family: 'Montserrat', sans-serif;
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn:hover, button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-rose { background-color: var(--rose-deep); color: var(--white); }
+.btn-green { background-color: var(--green-soft); color: var(--white); }
+.btn-charcoal { background-color: var(--charcoal); color: var(--white); }
+
+input, select, textarea {
+    font-family: 'Montserrat', sans-serif;
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    background: var(--white);
+    padding: 12px;
+    border: 2px solid var(--pink-light);
     border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background: var(--white);
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
 }
 
-.styled-table th {
-    background: var(--lavender);
-    color: var(--white);
-    padding: 10px;
-    text-align: left;
-}
-
-.styled-table td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.styled-table tr:nth-child(even) {
-    background-color: #f7f7f7;
-}
-.flash-content {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--lavender);
 }
 
 /* ================================
- Login and Create User styles
+   6. LOGIN PAGE (Two-Column Layout)
 ================================ */
-.login-body {
-    background: var(--cream);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
+/* Main container for the split screen */
 .login-container-2col {
-    width: 800px;
-    height: 480px;
     display: flex;
-    overflow: hidden;
-    border-radius: 18px;
-    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+    max-width: 900px;
+    width: 90%;
+    margin: 60px auto;
     background: var(--white);
-    animation: fadeIn 0.6s ease;
+    border-radius: 20px;
+    box-shadow: var(--shadow-mid);
+    overflow: hidden; /* Ensures rounded corners clip content */
+    min-height: 500px;
 }
 
+/* Left Panel: Decorative/Brand */
 .login-left {
-    width: 40%;
-    background: var(--pink-mid);
-    color: white;
-    padding: 40px 30px;
+    flex: 1;
+    background: linear-gradient(135deg, var(--pink-mid), var(--rose-deep));
+    color: var(--white);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 40px;
     text-align: center;
 }
 
 .login-left h1 {
-    margin: 0;
-    font-size: 2.2rem;
-    font-weight: bold;
+    color: var(--white);
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
 }
 
-.login-left p {
-    margin-top: 10px;
-    font-size: 1.1rem;
+.login-left-logo img {
+    max-width: 180px;
+    height: auto;
+    /* Optional: filter to make logo white if needed, otherwise standard */
+    filter: brightness(0) invert(1); 
     opacity: 0.9;
 }
 
+/* Right Panel: Form */
 .login-right {
-    width: 60%;
-    padding: 40px;
+    flex: 1.2; /* Slightly wider than left panel */
+    padding: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
 .login-right h2 {
-    margin-bottom: 1.2rem;
     color: var(--charcoal);
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
-.login-right label {
-    font-weight: 600;
-    color: var(--charcoal);
-    margin-top: 1rem;
-}
-
-.login-right input {
-    width: 100%;
+.login-error {
+    background-color: #f8d7da;
+    color: #721c24;
     padding: 10px;
-    border: 2px solid var(--pink-light);
     border-radius: 8px;
-    font-size: 1rem;
-    margin-top: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    text-align: center;
 }
 
-.login-right input:focus {
-    border-color: var(--lavender);
-    box-shadow: 0 0 6px rgba(151,142,196,0.3);
-    outline: none;
-}
-
-.btn-primary {
-    width: 100%;
-    padding: 12px;
-    background: var(--rose-deep);
-    color: var(--white);
-    border: none;
-    margin-top: 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: 0.25s ease;
-}
-
-.btn-primary:hover {
-    background: #b22c51;
-}
-
+/* Links below the form */
 .login-links-2 {
-    margin-top: 1.5rem;
+    margin-top: 20px;
     display: flex;
     justify-content: space-between;
+    font-size: 0.9rem;
 }
 
 .login-links-2 a {
     color: var(--lavender);
-    font-weight: bold;
     text-decoration: none;
+    font-weight: 600;
 }
 
 .login-links-2 a:hover {
     color: var(--rose-deep);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.login-left-logo {
+/* Button override for this specific form */
+.btn-primary {
+    background-color: var(--rose-deep);
+    color: var(--white);
+    width: 100%;
     margin-top: 20px;
-    text-align: center;
+    padding: 14px;
+    font-size: 1.1rem;
 }
 
-.login-left-logo img {
-    width: 95%;
-    max-width: 320px;
-    opacity: 0.92;
+/* Responsive: Stack on mobile */
+@media (max-width: 768px) {
+    .login-container-2col {
+        flex-direction: column;
+        margin: 20px auto;
+        width: 95%;
+    }
+    
+    .login-left {
+        padding: 30px;
+        min-height: 200px;
+    }
+    
+    .login-right {
+        padding: 30px;
+    }
 }
