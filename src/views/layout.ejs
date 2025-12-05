@@ -51,13 +51,46 @@
         (function() {
             // Highlight current nav link
             const links = document.querySelectorAll('.nav-links a[href]');
+            const normalize = (value) => {
+                const cleaned = (value || '').replace(/\/+$/, '').replace(/^\/+/, '').toLowerCase();
+                return cleaned || '/';
+            };
+            const baseKey = (value) => {
+                const norm = (value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (!norm) return '';
+                if (norm.endsWith('es')) return norm.slice(0, -2);
+                if (norm.endsWith('s')) return norm.slice(0, -1);
+                return norm;
+            };
+
             const path = (window.location.pathname.replace(/\/+$/, '') || '/');
+            const pathNorm = normalize(path);
+            const pathLast = pathNorm === '/' ? '' : pathNorm.split('/').filter(Boolean).pop();
+            const pathBase = baseKey(pathLast);
+            const pathKeys = pathNorm === '/'
+                ? []
+                : pathNorm.split('/').filter(Boolean).map(baseKey).filter(Boolean);
 
             links.forEach(link => {
                 const target = (link.getAttribute('href') || '').replace(/\/+$/, '') || '/';
+                const targetNorm = normalize(target);
+                const targetLast = targetNorm === '/' ? '' : targetNorm.split('/').filter(Boolean).pop();
+                const targetBase = baseKey(targetLast);
+
                 const isExact = target === path;
                 const isParent = target !== '/' && path.startsWith(target + '/');
-                if (isExact || isParent) {
+                const isLooseMatch = target !== '/' &&
+                    targetBase &&
+                    pathBase &&
+                    Math.min(targetBase.length, pathBase.length) >= 4 &&
+                    (pathBase.includes(targetBase) || targetBase.includes(pathBase));
+                const isSegmentMatch = target !== '/' &&
+                    targetBase &&
+                    targetBase.length >= 3 &&
+                    pathKeys.some(key => Math.min(key.length, targetBase.length) >= 3 &&
+                        (key.includes(targetBase) || targetBase.includes(key)));
+
+                if (isExact || isParent || isLooseMatch || isSegmentMatch) {
                     link.classList.add('active');
                 }
             });
