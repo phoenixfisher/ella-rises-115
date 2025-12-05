@@ -295,6 +295,7 @@ nav img {
 .btn-rose { background-color: var(--rose-deep); color: var(--white); }
 .btn-green { background-color: var(--green-soft); color: var(--white); }
 .btn-charcoal { background-color: var(--charcoal); color: var(--white); }
+.btn-lavender { background-color: var(--lavender); color: var(--white);}
 
 /* Small Button Variant (for tables) */
 .btn-sm {
