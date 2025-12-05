@@ -3,6 +3,15 @@
 ================================ */
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap');
 
+* {
+    box-sizing: border-box; /* Ensures padding doesn't increase width */
+}
+
+html, body {
+    overflow-x: hidden;     /* Forcibly disables horizontal scrolling */
+    max-width: 100%;        /* Ensures body never exceeds screen width */
+}
+
 :root {
     --blue-soft:     #99B7C6;
     --lavender:      #978EC4;
