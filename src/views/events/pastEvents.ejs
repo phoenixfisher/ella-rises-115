@@ -1,0 +1,102 @@
+<div class="landing">
+    <!-- Header Section -->
+    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 2rem; gap: 12px;">
+        <% if (user && user.level === 'M') { %>
+            <form action="/addEvent" method="GET" style="margin: 0;">
+                <button type="submit" class="btn btn-green" style="margin-top: 0; width: auto; padding: 10px 24px;">
+                    Create New Event
+                </button>
+            </form>
+        <% } %>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap;">
+        <h2 style="color: var(--charcoal); border-bottom: 2px solid #ccc; padding-bottom: 10px; margin: 0;">Past Events</h2>
+        <div class="event-tabs">
+            <a href="/events" class="event-tab-button" style="text-decoration: none; text-align: center;">Upcoming</a>
+            <button type="button" class="event-tab-button active" disabled>Past</button>
+        </div>
+    </div>
+
+    <% if (pastEvents.length === 0) { %>
+        <p style="color: var(--charcoal); opacity: 0.7;">No past events found.</p>
+    <% } else { %>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap;">
+            <% const prevPastTop = Math.max((typeof pastPage !== 'undefined' ? pastPage : 1) - 1, 1); %>
+            <% const nextPastTop = Math.min((typeof pastPage !== 'undefined' ? pastPage : 1) + 1, (typeof pastTotalPages !== 'undefined' ? pastTotalPages : 1)); %>
+            <div>
+                <a href="/events/past?page=<%= prevPastTop %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (pastPage <= 1) ? 'disabled' : '' %>>← Prev</button>
+                </a>
+            </div>
+            <span style="font-weight: 600; color: var(--charcoal); font-size: 0.95rem;">
+                Page <%= pastPage || 1 %> of <%= pastTotalPages || 1 %>
+            </span>
+            <div>
+                <a href="/events/past?page=<%= nextPastTop %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (pastPage >= pastTotalPages) ? 'disabled' : '' %>>Next →</button>
+                </a>
+            </div>
+        </div>
+
+        <div class="pillar-grid events-grid">
+            <% pastEvents.forEach(event => { %>
+                <div class="hero-panel events-card" style="opacity: 0.8; background: #f9f9f9;">
+                    <div>
+                        <h3 style="margin-top: 0; color: var(--charcoal); font-size: 1.2rem;"><%= event.eventname %></h3>
+                        <h6 style="color: var(--lavender); margin: 5px 0 15px 0; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;"><%= event.eventtype %></h6>
+                        
+                        <p style="font-size: 0.9rem; color: #666;">
+                            <%= event.eventdescription.substring(0, 80) %>...
+                        </p>
+
+                        <ul style="list-style: none; padding: 0; margin: 15px 0; font-size: 0.9rem; color: #666;">
+                            <li style="margin-bottom: 5px;">
+                                <strong>Date:</strong> <%= new Date(event.eventdatetimestart).toLocaleDateString() %>
+                            </li>
+                            <li style="margin-bottom: 5px;">
+                                <strong>Location:</strong> <%= event.eventlocation %>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <% if (user && user.level === 'M') { %>
+                        <div class="hero-actions" style="margin-top: auto; display: flex; gap: 10px;">
+                            <button onclick="location.href='/editEvent/<%= event.eventid %>'" 
+                                    style="background: #ccc; background-color: var(--blue-soft); color: var(--blue); margin-top: 0; padding: 6px 12px; font-size: 0.8rem;">
+                                Edit
+                            </button>
+                            
+                            <form action="/deleteEvent/<%= event.eventid %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this past event?');" style="flex: 1;">
+                                <button type="submit" style="background-color: var(--coral); margin-top: 0; padding: 6px 12px; font-size: 0.8rem;">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 1rem; flex-wrap: wrap;">
+            <% const prevPast = Math.max((typeof pastPage !== 'undefined' ? pastPage : 1) - 1, 1); %>
+            <% const nextPast = Math.min((typeof pastPage !== 'undefined' ? pastPage : 1) + 1, (typeof pastTotalPages !== 'undefined' ? pastTotalPages : 1)); %>
+            <div>
+                <a href="/events/past?page=<%= prevPast %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (pastPage <= 1) ? 'disabled' : '' %>>← Prev</button>
+                </a>
+            </div>
+            <span style="font-weight: 600; color: var(--charcoal); font-size: 0.95rem;">
+                Page <%= pastPage || 1 %> of <%= pastTotalPages || 1 %>
+            </span>
+            <div>
+                <a href="/events/past?page=<%= nextPast %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (pastPage >= pastTotalPages) ? 'disabled' : '' %>>Next →</button>
+                </a>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 0.9rem; color: #666; margin-top: 0.25rem; flex-wrap: wrap;">
+            <span>Showing up to 50 per page</span>
+            <span>Total results: <%= typeof pastTotal !== 'undefined' ? pastTotal : '' %></span>
+        </div>
+    <% } %>
+</div>

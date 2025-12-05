@@ -8,26 +8,77 @@ const router = express.Router();
 // View events
 router.get("/events", async (req, res) => {
     try {
-        const eventList = await db("events")
+        const now = new Date();
+        const baseSelect = [
+            "events.eventid",
+            "events.eventname",
+            "events.eventtype",
+            "events.eventdescription",
+            "events.eventrecurrencepattern",
+            "eventoccurrences.eventdatetimestart",
+            "eventoccurrences.eventdatetimeend",
+            "eventoccurrences.eventlocation",
+        ];
+
+        const upcomingEvents = await db("events")
             .join("eventoccurrences", "events.eventid", "=", "eventoccurrences.eventid")
-            .select(
-                "events.eventid",
-                "events.eventname",
-                "events.eventtype",
-                "events.eventdescription",
-                "events.eventrecurrencepattern",
-                "eventoccurrences.eventdatetimestart",
-                "eventoccurrences.eventdatetimeend",
-                "eventoccurrences.eventlocation"
-            )
+            .where("eventoccurrences.eventdatetimestart", ">=", now)
+            .select(baseSelect)
             .orderBy("eventoccurrences.eventdatetimestart", "asc");
 
         res.render("events/events", {
-            events: eventList,
+            upcomingEvents,
             user: req.session.user,
         });
     } catch (err) {
         console.error("Error fetching events:", err);
+        res.status(500).send("Error loading events");
+    }
+});
+
+// Past events with pagination
+router.get("/events/past", async (req, res) => {
+    try {
+        const now = new Date();
+        const pastPage = Math.max(parseInt(req.query.page, 10) || 1, 1);
+        const pageSize = 50;
+        const offset = (pastPage - 1) * pageSize;
+
+        const baseSelect = [
+            "events.eventid",
+            "events.eventname",
+            "events.eventtype",
+            "events.eventdescription",
+            "events.eventrecurrencepattern",
+            "eventoccurrences.eventdatetimestart",
+            "eventoccurrences.eventdatetimeend",
+            "eventoccurrences.eventlocation",
+        ];
+
+        const pastBase = db("events")
+            .join("eventoccurrences", "events.eventid", "=", "eventoccurrences.eventid")
+            .where("eventoccurrences.eventdatetimestart", "<", now);
+
+        const [{ count }] = await pastBase.clone().count("* as count");
+        const pastEvents = await pastBase
+            .clone()
+            .select(baseSelect)
+            .orderBy("eventoccurrences.eventdatetimestart", "desc")
+            .limit(pageSize)
+            .offset(offset);
+
+        const pastTotal = parseInt(count, 10) || 0;
+        const pastTotalPages = Math.max(Math.ceil(pastTotal / pageSize), 1);
+
+        res.render("events/pastEvents", {
+            pastEvents,
+            pastPage,
+            pastTotalPages,
+            pastTotal,
+            user: req.session.user,
+        });
+    } catch (err) {
+        console.error("Error fetching past events:", err);
         res.status(500).send("Error loading events");
     }
 });

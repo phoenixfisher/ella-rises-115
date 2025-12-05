@@ -668,3 +668,38 @@ input:focus, select:focus, textarea:focus {
     border-color: var(--lavender);
     color: var(--white);
 }
+
+/* Events tabs */
+.event-tabs {
+    display: inline-flex;
+    gap: 8px;
+    border: 1px solid var(--pink-light);
+    border-radius: 10px;
+    background: #fff;
+    padding: 6px;
+}
+
+.event-tab-button {
+    border: none;
+    background: transparent;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--charcoal);
+    transition: all 0.15s ease;
+}
+
+.event-tab-button.active {
+    background: var(--lavender);
+    color: #fff;
+    box-shadow: var(--shadow-light);
+}
+
+.event-panel {
+    display: none;
+}
+
+.event-panel.active {
+    display: block;
+}
