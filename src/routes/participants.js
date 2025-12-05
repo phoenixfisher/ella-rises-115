@@ -5,53 +5,80 @@ const { requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
-// Route for viewing all participants with search functionality
+// Route for viewing all participants with Search, Sort, AND Pagination
 router.get("/participants", requireRole(["M"]), async (req, res) => {
-    const searchTerm = (req.query.search || "").trim();
-    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-    const pageSize = 50;
-    const offset = (page - 1) * pageSize;
-
-    const applySearch = (builder) => {
-        if (searchTerm) {
-            builder.where((qb) => {
-                qb.where("participantfirstname", "ilike", `%${searchTerm}%`)
-                  .orWhere("participantlastname", "ilike", `%${searchTerm}%`)
-                  .orWhere("participantemail", "ilike", `%${searchTerm}%`)
-                  .orWhere("participantphone", "ilike", `%${searchTerm}%`);
-            });
-        }
-    };
-
     try {
-        const baseQuery = db("participants").modify(applySearch);
+        // 1. Get Parameters
+        const searchTerm = req.query.search || "";
+        const sortBy = req.query.sortBy || "lastname";
+        const sortOrder = req.query.sortOrder || "asc";
+        
+        // Pagination Params
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; // Number of participants per page
+        const offset = (page - 1) * limit;
 
-        const [{ count }] = await baseQuery.clone().count("* as count");
+        // 2. Define Filter Logic (Used for both counting and fetching)
+        const modifyQuery = (queryBuilder) => {
+            if (searchTerm) {
+                queryBuilder.where((builder) => {
+                    builder.where("participantfirstname", "ilike", `%${searchTerm}%`)
+                           .orWhere("participantlastname", "ilike", `%${searchTerm}%`)
+                           .orWhere("participantemail", "ilike", `%${searchTerm}%`)
+                           .orWhere("participantphone", "ilike", `%${searchTerm}%`);
+                });
+            }
+        };
 
-        const participants = await baseQuery
-            .clone()
-            .select(
+        // 3. Get Total Count (Needed to calculate total pages)
+        const countResult = await db("participants")
+            .where(modifyQuery)
+            .count("participantid as count")
+            .first();
+        
+        const totalCount = parseInt(countResult.count);
+        const totalPages = Math.ceil(totalCount / limit);
+
+        // 4. Get Actual Data
+        const sortMap = {
+            "lastname": "participantlastname",
+            "firstname": "participantfirstname",
+            "email": "participantemail"
+        };
+        const dbColumn = sortMap[sortBy] || "participantlastname";
+
+        const participants = await db.select(
                 "participantid",
                 "participantemail",
                 db.raw("participantfirstname || ' ' || participantlastname as participantfullname"),
+                "participantfirstname",
+                "participantlastname",
                 "participantphone"
             )
-            .orderBy("participantlastname")
-            .limit(pageSize)
+            .from("participants")
+            .where(modifyQuery)
+            .orderBy(dbColumn, sortOrder)
+            .limit(limit)
             .offset(offset);
 
-        const total = parseInt(count, 10) || 0;
-        const totalPages = Math.max(Math.ceil(total / pageSize), 1);
-
+        // 5. Render View
         res.render("participants/participants", {
-            participants,
+            participants: participants,
             userLevel: req.session.user.level,
             user: req.session.user,
-            searchTerm,
-            page,
-            totalPages,
-            total
+            
+            // Search & Sort params (to keep UI state)
+            searchTerm: searchTerm,
+            sortBy: sortBy,
+            sortOrder: sortOrder,
+
+            // Pagination Variables (Fixes your ReferenceError)
+            page: page,
+            totalPages: totalPages,
+            prevPageTop: page > 1 ? page - 1 : 1, 
+            nextPageTop: page < totalPages ? page + 1 : totalPages
         });
+
     } catch (err) {
         console.error("Database query error:", err.message);
         res.render("participants/participants", {
@@ -59,7 +86,15 @@ router.get("/participants", requireRole(["M"]), async (req, res) => {
             userLevel: req.session.user ? req.session.user.level : null,
             user: req.session.user,
             error_message: `Database error: ${err.message}`,
-            searchTerm
+            
+            // Default values to prevent view crashes on error
+            searchTerm: "",
+            sortBy: "lastname",
+            sortOrder: "asc",
+            page: 1,
+            totalPages: 0,
+            prevPageTop: 1,
+            nextPageTop: 1
         });
     }
 });

@@ -13,23 +13,35 @@
             <% } %>
         </div>
 
-        <form action="/participants" method="GET" style="margin-bottom: 1.5rem; display: flex; gap: 10px; flex-wrap: wrap;">
+        <form action="/participants" method="GET" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            
             <input 
                 type="text" 
                 name="search" 
-                placeholder="Search name, email, or phone..." 
+                placeholder="Search..." 
                 value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-                style="flex: 1; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;"
+                style="flex: 2; min-width: 200px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;"
             >
-            <input type="hidden" name="page" value="1">
-            <button type="submit" class="btn" style="width: auto; background-color: var(--lavender); color: white; margin-top: 0;">
-                Search
+
+            <select name="sortBy" style="flex: 1; min-width: 140px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background-color: white; font-family: 'Montserrat', sans-serif;">
+                <option value="lastname" <%= typeof sortBy !== 'undefined' && sortBy === 'lastname' ? 'selected' : '' %>>Last Name</option>
+                <option value="firstname" <%= typeof sortBy !== 'undefined' && sortBy === 'firstname' ? 'selected' : '' %>>First Name</option>
+                <option value="email" <%= typeof sortBy !== 'undefined' && sortBy === 'email' ? 'selected' : '' %>>Email</option>
+            </select>
+
+            <select name="sortOrder" style="flex: 1; min-width: 100px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background-color: white; font-family: 'Montserrat', sans-serif;">
+                <option value="asc" <%= typeof sortOrder !== 'undefined' && sortOrder === 'asc' ? 'selected' : '' %>>A - Z</option>
+                <option value="desc" <%= typeof sortOrder !== 'undefined' && sortOrder === 'desc' ? 'selected' : '' %>>Z - A</option>
+            </select>
+
+            <button type="submit" class="btn" style="width: auto; background-color: var(--lavender); color: white; margin-top: 0; border: none;">
+                Go
             </button>
             
-            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+            <% if ((typeof searchTerm !== 'undefined' && searchTerm) || (typeof sortBy !== 'undefined' && sortBy !== 'lastname') || (typeof sortOrder !== 'undefined' && sortOrder !== 'asc')) { %>
                 <a href="/participants" style="text-decoration: none;">
                     <button type="button" class="btn btn-charcoal" style="width: auto; margin-top: 0;">
-                        Clear
+                        Reset
                     </button>
                 </a>
             <% } %>
