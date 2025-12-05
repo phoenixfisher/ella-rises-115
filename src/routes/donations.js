@@ -4,35 +4,43 @@ const db = require("../config/db");
 
 const router = express.Router();
 
-// Display Donations
+// Display Donations with Search, Sort, and Pagination
 router.get("/donations", async (req, res) => {
     try {
-        const { search } = req.query;
+        const { search, sortBy = "date", sortOrder = "desc", page = 1 } = req.query;
         const searchTerm = (search || "").trim();
-        const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+        const currentPage = Math.max(parseInt(page, 10) || 1, 1);
         const pageSize = 50;
-        const offset = (page - 1) * pageSize;
+        const offset = (currentPage - 1) * pageSize;
 
-        const applySearch = (qb) => {
-            if (searchTerm) {
-                const term = `%${searchTerm.toLowerCase()}%`;
-                qb.where(function() {
-                    this.whereRaw("LOWER(p.participantfirstname) LIKE ?", [term])
-                        .orWhereRaw("LOWER(p.participantlastname) LIKE ?", [term])
-                        .orWhereRaw("LOWER(CONCAT(p.participantfirstname, ' ', p.participantlastname)) LIKE ?", [term])
-                        .orWhereRaw("CAST(d.donationamount AS TEXT) LIKE ?", [`%${searchTerm}%`]);
-                });
-            }
-        };
-
+        // Base Query
         const base = db("donations as d")
-            .leftJoin("participants as p", "d.participantid", "p.participantid")
-            .modify(applySearch);
+            .leftJoin("participants as p", "d.participantid", "p.participantid");
 
+        // Apply Search
+        if (searchTerm) {
+            const term = `%${searchTerm.toLowerCase()}%`;
+            base.where(function() {
+                this.whereRaw("LOWER(p.participantfirstname) LIKE ?", [term])
+                    .orWhereRaw("LOWER(p.participantlastname) LIKE ?", [term])
+                    .orWhereRaw("LOWER(CONCAT(p.participantfirstname, ' ', p.participantlastname)) LIKE ?", [term])
+                    .orWhereRaw("CAST(d.donationamount AS TEXT) LIKE ?", [`%${searchTerm}%`]);
+            });
+        }
+
+        // Get Total Count
         const [{ count }] = await base.clone().count("* as count");
 
+        // Map sort keys to DB columns
+        const sortMap = {
+            "donor": "p.participantlastname",
+            "date": "d.donationdate",
+            "amount": "d.donationamount"
+        };
+        const dbColumn = sortMap[sortBy] || "d.donationdate";
+
+        // Fetch Data with Sort and Pagination
         const donations = await base
-            .clone()
             .select(
                 "d.donationid",
                 "p.participantfirstname",
@@ -40,7 +48,7 @@ router.get("/donations", async (req, res) => {
                 "d.donationdate",
                 "d.donationamount"
             )
-            .orderByRaw("d.donationdate IS NULL ASC, d.donationdate DESC")
+            .orderBy(dbColumn, sortOrder) // Apply Sort
             .limit(pageSize)
             .offset(offset);
 
@@ -51,7 +59,9 @@ router.get("/donations", async (req, res) => {
             donations,
             user: req.session.user || null,
             searchTerm,
-            page,
+            sortBy,    // Pass to view
+            sortOrder, // Pass to view
+            page: currentPage,
             totalPages,
             total
         });
