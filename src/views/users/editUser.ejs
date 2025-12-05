@@ -27,14 +27,14 @@
 
             <div style="margin-bottom: 2rem;">
                 <label style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Access Level</label>
-                <div style="display: flex; gap: 20px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background: #fff;">
-                    <div style="display: flex; align-items: center;">
-                        <input type="radio" name="level" id="user" value="U" <%= user.level === 'U' ? 'checked' : '' %> style="margin-right: 8px; transform: scale(1.2);">
-                        <label for="user" style="margin: 0; cursor: pointer;">User</label>
+                <div class="access-level-options">
+                    <div class="access-level-option">
+                        <input type="radio" name="level" id="level-user" value="U" <%= user.level === 'U' ? 'checked' : '' %>>
+                        <label for="level-user">User</label>
                     </div>
-                    <div style="display: flex; align-items: center;">
-                        <input type="radio" name="level" id="manager" value="M" <%= user.level === 'M' ? 'checked' : '' %> style="margin-right: 8px; transform: scale(1.2);">
-                        <label for="manager" style="margin: 0; cursor: pointer;">Manager</label>
+                    <div class="access-level-option">
+                        <input type="radio" name="level" id="level-manager" value="M" <%= user.level === 'M' ? 'checked' : '' %>>
+                        <label for="level-manager">Manager</label>
                     </div>
                 </div>
             </div>

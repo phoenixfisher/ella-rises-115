@@ -618,3 +618,46 @@ input:focus, select:focus, textarea:focus {
     display: inline-block;
     margin: 0;
 }
+
+/* Access level toggle buttons */
+.access-level-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+}
+
+.access-level-option {
+    position: relative;
+}
+
+.access-level-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+}
+
+.access-level-option label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    cursor: pointer;
+    padding: 12px;
+    border: 2px solid var(--pink-light);
+    border-radius: 10px;
+    background: #fff;
+    font-weight: 600;
+    transition: all 0.15s ease;
+}
+
+.access-level-option input[type="radio"]:focus + label {
+    outline: 2px solid var(--lavender);
+    outline-offset: 2px;
+}
+
+.access-level-option input[type="radio"]:checked + label {
+    background: var(--lavender);
+    border-color: var(--lavender);
+    color: var(--white);
+}
