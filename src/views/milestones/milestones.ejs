@@ -5,8 +5,24 @@
         </div>
     </div>
 
+    <form action="/milestones" method="GET" style="background: #fff; padding: 10px 12px; border: 1px solid var(--pink-light); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; gap: 10px; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap;">
+        <input
+            type="text"
+            name="search"
+            value="<%= (typeof search !== 'undefined' && search) ? search : '' %>"
+            placeholder="Search milestones..."
+            style="flex: 1; padding: 10px 12px; border: 1px solid #dcdde3; border-radius: 8px; box-sizing: border-box; background: #fafbff;"
+        />
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <% if (typeof search !== 'undefined' && search) { %>
+                <a href="/milestones" class="btn btn-soft btn-sm" style="margin: 0; text-decoration: none;">Clear</a>
+            <% } %>
+            <button type="submit" class="btn btn-rose" style="margin: 0; width: auto;">Search</button>
+        </div>
+    </form>
+
     <% if (!milestones || milestones.length === 0) { %>
-        <div class="hero-panel" style="padding: 24px; border: 1px solid var(--pink-light);">
+        <div class="hero-panel" style="padding: 16px; border: 1px solid var(--pink-light);">
             No milestones found.
         </div>
     <% } else { %>

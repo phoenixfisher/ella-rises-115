@@ -7,17 +7,24 @@ const router = express.Router();
 
 // Milestones grouped by title
 router.get("/milestones", requireRole(["M"]), async (req, res) => {
+    const search = (req.query.search || "").trim();
     try {
         const milestones = await db("milestones")
             .select("milestonetitle")
             .count("* as milestonecount")
             .countDistinct("participantid as participantcount")
             .groupBy("milestonetitle")
+            .modify((qb) => {
+                if (search) {
+                    qb.whereRaw("LOWER(milestonetitle) LIKE ?", [`%${search.toLowerCase()}%`]);
+                }
+            })
             .orderBy("milestonetitle", "asc");
 
         res.render("milestones/milestones", {
             milestones,
             user: req.session.user,
+            search,
         });
     } catch (err) {
         console.error("Error fetching milestones:", err);
