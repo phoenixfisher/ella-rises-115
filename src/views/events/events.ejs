@@ -30,7 +30,7 @@
     <% } else { %>
         <div class="pillar-grid">
             <% upcomingEvents.forEach(event => { %>
-                <div class="hero-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="hero-panel events-card">
                     <div>
                         <!-- Event Type Badge -->
                         <span class="hero-badge" style="background: var(--lavender); margin-bottom: 12px; font-size: 0.85rem;">
@@ -86,7 +86,7 @@
     <% } else { %>
         <div class="pillar-grid">
             <% pastEvents.forEach(event => { %>
-                <div class="hero-panel" style="opacity: 0.8; background: #f9f9f9; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="hero-panel events-card" style="opacity: 0.8; background: #f9f9f9;">
                     <div>
                         <h3 style="margin-top: 0; color: var(--charcoal); font-size: 1.2rem;"><%= event.eventname %></h3>
                         <h6 style="color: var(--lavender); margin: 5px 0 15px 0; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;"><%= event.eventtype %></h6>

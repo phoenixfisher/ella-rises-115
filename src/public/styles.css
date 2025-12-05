@@ -339,6 +339,13 @@ nav img {
     margin: 0;
 }
 
+.events-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 260px;
+}
+
 /* 3 Pillars Grid */
 .pillar-grid {
     display: grid;
