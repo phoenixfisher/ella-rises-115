@@ -6,11 +6,9 @@
             <h2 style="color: var(--charcoal); margin: 0;">Users List</h2>
             
             <% if (userLevel === 'M') { %>
-                <form action="/addUser" method="GET" style="margin: 0;">
-                    <button type="submit" class="btn btn-rose">
-                        Add User
-                    </button>
-                </form>
+                <a href="/addUser" style="text-decoration: none; background: var(--rose-deep); color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; display: inline-block;">
+                    + Add User
+                </a>
             <% } %>
         </div>
 
