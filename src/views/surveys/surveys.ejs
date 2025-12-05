@@ -125,7 +125,7 @@
                                     <%= survey.participantfirstname %> <%= survey.participantlastname %>
                                 </td>
                                 <td>
-                                    <span style="font-weight: bold; color: <%= scoreColor %>;">
+                                    <span style="font-weight: bold; color: <%= scoreColor %>; white-space: nowrap;">
                                         <%= survey.surveyoverallscore ? score + ' / 5.0' : 'N/A' %>
                                     </span>
                                 </td>
@@ -137,12 +137,12 @@
                                 
                                 <% if (userLevel === 'M') { %>
                                     <td>
-                                        <div style="display: flex; gap: 10px;">
-                                            <a href="/editSurvey/<%= survey.surveyid %>">
-                                                <button style="margin: 0; padding: 5px 10px; background-color: var(--blue-soft); font-size: 0.85rem;">Edit</button>
+                                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; white-space: nowrap;">
+                                            <a href="/editSurvey/<%= survey.surveyid %>" style="display: inline-flex; flex: 0 0 auto;">
+                                                <button style="margin: 0; padding: 5px 10px; background-color: var(--blue-soft); font-size: 0.85rem; white-space: nowrap;">Edit</button>
                                             </a>
-                                            <form action="/deleteSurvey/<%= survey.surveyid %>" method="POST" onsubmit="return confirm('Delete this survey?');" style="margin: 0;">
-                                                <button type="submit" style="margin: 0; padding: 5px 10px; background-color: #dc3545; font-size: 0.85rem;">Delete</button>
+                                            <form action="/deleteSurvey/<%= survey.surveyid %>" method="POST" onsubmit="return confirm('Delete this survey?');" style="margin: 0; display: inline-flex; flex: 0 0 auto;">
+                                                <button type="submit" style="margin: 0; padding: 5px 10px; background-color: #dc3545; font-size: 0.85rem; white-space: nowrap;">Delete</button>
                                             </form>
                                         </div>
                                     </td>
