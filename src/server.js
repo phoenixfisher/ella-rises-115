@@ -16,8 +16,8 @@ const participantRoutes = require("./routes/participants");
 const milestoneRoutes = require("./routes/milestones");
 const eventRoutes = require("./routes/events");
 const donationRoutes = require("./routes/donations");
-const pageRoutes = require("./routes/pages");
 const surveyRoutes = require("./routes/surveys");
+const dashboardRoutes = require("./routes/dashboard")
 
 // Initialize express object as the app
 const app = express();
@@ -52,8 +52,8 @@ app.use(participantRoutes);
 app.use(milestoneRoutes);
 app.use(eventRoutes);
 app.use(donationRoutes);
-app.use(pageRoutes);
 app.use(surveyRoutes);
+app.use(dashboardRoutes);
 
 // Start server
 const port = process.env.PORT || 3000;

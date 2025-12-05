@@ -69,17 +69,6 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// Dashboard sample
-router.get("/dashboard", (req, res) => {
-    if (!req.session.user) {
-        return res.redirect("/login");
-    }
-    res.render("index", {
-        username: req.session.user.username,
-        level: req.session.user.level,
-    });
-});
-
 // LOGOUT
 router.get("/logout", (req, res) => {
     req.session.destroy(() => {
