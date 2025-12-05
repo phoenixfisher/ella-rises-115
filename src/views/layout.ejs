@@ -49,6 +49,19 @@
 
     <script>
         (function() {
+            // Highlight current nav link
+            const links = document.querySelectorAll('.nav-links a[href]');
+            const path = (window.location.pathname.replace(/\/+$/, '') || '/');
+
+            links.forEach(link => {
+                const target = (link.getAttribute('href') || '').replace(/\/+$/, '') || '/';
+                const isExact = target === path;
+                const isParent = target !== '/' && path.startsWith(target + '/');
+                if (isExact || isParent) {
+                    link.classList.add('active');
+                }
+            });
+
             const flashes = document.querySelectorAll('.flash');
             flashes.forEach(flash => {
                 const closer = flash.querySelector('.flash-close');

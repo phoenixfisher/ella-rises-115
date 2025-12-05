@@ -100,10 +100,11 @@ nav {
     background-color: var(--white);
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     padding: 12px 40px;
     box-sizing: border-box;
+    border-bottom: 1px solid #ececec;
 }
 
 /* FAILSAFE: This forces ANY image in the navbar to be small */
@@ -126,7 +127,7 @@ nav img {
 .nav-links {
     display: flex;
     gap: 30px;
-    align-items: center;
+    align-items: stretch;
 }
 
 .nav-links a {
@@ -137,10 +138,21 @@ nav img {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: color 0.2s ease;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 0 14px;
+    border-bottom: 3px solid transparent;
 }
 
 .nav-links a:hover {
     color: var(--rose-deep);
+}
+
+.nav-links a.active {
+    color: var(--rose-deep);
+    border-bottom-color: var(--rose-deep);
+    font-weight: 700;
 }
 /* ================================
    4. LANDING PAGE & CONTAINERS
