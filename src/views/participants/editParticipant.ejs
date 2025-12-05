@@ -12,96 +12,71 @@
         <% } %>
 
         <form action="/editParticipant/<%= participant.participantid %>" method="post">
-            
-            <!-- Section 1: Basic Identity -->
-            <h4 style="color: var(--rose-deep); margin-bottom: 1rem; font-size: 1.1rem;">Personal Details</h4>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                <div>
-                    <label for="participantfirstname" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">First Name</label>
-                    <input type="text" id="participantfirstname" name="participantfirstname" value="<%= participant.participantfirstname %>" required
-                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
+            <h4 style="color: var(--rose-deep); margin: 0; font-size: 1.1rem;">Personal Details</h4>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="participantfirstname">First Name</label>
+                    <input type="text" id="participantfirstname" name="participantfirstname" class="form-control" value="<%= participant.participantfirstname %>" required>
                 </div>
-                <div>
-                    <label for="participantlastname" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Last Name</label>
-                    <input type="text" id="participantlastname" name="participantlastname" value="<%= participant.participantlastname %>" required
-                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
+                <div class="form-field">
+                    <label for="participantlastname">Last Name</label>
+                    <input type="text" id="participantlastname" name="participantlastname" class="form-control" value="<%= participant.participantlastname %>" required>
                 </div>
             </div>
-
-            <div style="margin-bottom: 2rem;">
-                <label for="participantrole" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Role</label>
-                <input type="text" id="participantrole" name="participantrole" value="<%= participant.participantrole %>" placeholder="e.g. Participant, Mentor, Speaker"
-                       style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
+            <div class="form-field">
+                <label for="participantrole">Role</label>
+                <input type="text" id="participantrole" name="participantrole" class="form-control" value="<%= participant.participantrole %>" placeholder="e.g. Participant, Mentor, Speaker">
             </div>
 
-            <!-- Section 2: Contact Info -->
-            <h4 style="color: var(--rose-deep); margin-bottom: 1rem; font-size: 1.1rem; border-top: 1px solid #eee; padding-top: 1.5rem;">Contact Information</h4>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                <div>
-                    <label for="participantemail" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Email</label>
-                    <input type="email" id="participantemail" name="participantemail" value="<%= participant.participantemail %>" required
-                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
+            <h4 style="color: var(--rose-deep); margin: 0; font-size: 1.1rem;">Contact Information</h4>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="participantemail">Email</label>
+                    <input type="email" id="participantemail" name="participantemail" class="form-control" value="<%= participant.participantemail %>" required>
                 </div>
-                <div>
-                    <label for="participantphone" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Phone Number</label>
-                    <input type="tel" id="participantphone" name="participantphone" value="<%= participant.participantphone %>"
-                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
+                <div class="form-field">
+                    <label for="participantphone">Phone Number</label>
+                    <input type="tel" id="participantphone" name="participantphone" class="form-control" value="<%= participant.participantphone %>">
                 </div>
             </div>
-
-            <div style="margin-bottom: 2rem;">
-                <label for="participantdob" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Date of Birth</label>
-                <!-- We use a helper function below to format the date string correctly for the input -->
-                <input type="text" id="participantdob" name="participantdob" placeholder="YYYY-MM-DD"
-                    style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">            </div>
-
-            <!-- Section 3: Location & Background -->
-            <h4 style="color: var(--rose-deep); margin-bottom: 1rem; font-size: 1.1rem; border-top: 1px solid #eee; padding-top: 1.5rem;">Location & Background</h4>
-
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                <div>
-                    <label for="participantcity" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">City</label>
-                    <input type="text" id="participantcity" name="participantcity" value="<%= participant.participantcity %>"
-                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
-                </div>
-                <div>
-                    <label for="participantstate" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">State</label>
-                    <input type="text" id="participantstate" name="participantstate" value="<%= participant.participantstate %>" maxlength="2"
-                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
-                </div>
-                <div>
-                    <label for="participantzip" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Zip</label>
-                    <input type="text" id="participantzip" name="participantzip" value="<%= participant.participantzip %>"
-                           style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
-                </div>
+            <div class="form-field">
+                <label for="participantdob">Date of Birth</label>
+                <input type="text" id="participantdob" name="participantdob" class="form-control" placeholder="YYYY-MM-DD">
             </div>
 
-            <div style="margin-bottom: 1.5rem;">
-                <label for="participantschooloremployer" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">School or Employer</label>
-                <input type="text" id="participantschooloremployer" name="participantschooloremployer" value="<%= participant.participantschooloremployer %>"
-                       style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
+            <h4 style="color: var(--rose-deep); margin: 0; font-size: 1.1rem;">Location & Background</h4>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="participantcity">City</label>
+                    <input type="text" id="participantcity" name="participantcity" class="form-control" value="<%= participant.participantcity %>">
+                </div>
+                <div class="form-field">
+                    <label for="participantstate">State</label>
+                    <input type="text" id="participantstate" name="participantstate" class="form-control" value="<%= participant.participantstate %>" maxlength="2">
+                </div>
+                <div class="form-field">
+                    <label for="participantzip">Zip</label>
+                    <input type="text" id="participantzip" name="participantzip" class="form-control" value="<%= participant.participantzip %>">
+                </div>
+            </div>
+            <div class="form-field">
+                <label for="participantschooloremployer">School or Employer</label>
+                <input type="text" id="participantschooloremployer" name="participantschooloremployer" class="form-control" value="<%= participant.participantschooloremployer %>">
+            </div>
+            <div class="form-field">
+                <label for="participantfieldofinterest">Field of Interest</label>
+                <input type="text" id="participantfieldofinterest" name="participantfieldofinterest" class="form-control" value="<%= participant.participantfieldofinterest %>">
             </div>
 
-            <div style="margin-bottom: 2.5rem;">
-                <label for="participantfieldofinterest" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Field of Interest</label>
-                <input type="text" id="participantfieldofinterest" name="participantfieldofinterest" value="<%= participant.participantfieldofinterest %>"
-                       style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;">
-            </div>
-
-            <!-- Buttons -->
-            <div style="display: flex; gap: 15px; border-top: 2px solid var(--pink-light); padding-top: 1.5rem;">
+            <div class="form-actions" style="border-top: 2px solid var(--pink-light); padding-top: 1rem;">
                 <a href="/participants" style="flex: 1; text-align: center;">
-                    <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal); border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                    <button type="button" style="width: 100%; background: #ccc; color: var(--charcoal); border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold;">
                         Cancel
                     </button>
                 </a>
-                <div style="flex: 1;">
-                    <button type="submit" style="width: 100%; padding: 12px; background: var(--rose-deep); color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold;">
-                        Save Changes
-                    </button>
-                </div>
+                <button type="submit" style="flex: 1; width: 100%; background: var(--rose-deep); color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                    Save Changes
+                </button>
             </div>
 
         </form>
