@@ -1,41 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Donation</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
+<div class="landing">
+    <div class="hero-panel" style="max-width: 600px; margin: 0 auto;">
+        <h2 style="color: var(--charcoal); margin-top: 0; margin-bottom: 1.5rem;">Edit Donation</h2>
 
-<main class="login-container">
-    <h1>Edit Donation</h1>
+        <form action="/editDonation/<%= donation.donationid %>" method="POST">
+            <div style="margin-bottom: 1.5rem;">
+                <label for="donationdate" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Donation Date</label>
+                <input 
+                    id="donationdate"
+                    type="date" 
+                    name="donationdate" 
+                    value="<%= donation.donationdate ? donation.donationdate.toISOString().split('T')[0] : '' %>"
+                    required
+                    style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background: var(--white); font-size: 1rem;"
+                >
+            </div>
 
-    <form action="/editDonation/<%= donation.donationid %>" method="POST">
+            <div style="margin-bottom: 2rem;">
+                <label for="donationamount" style="display: block; margin-bottom: 0.5rem; color: var(--charcoal); font-weight: 500;">Donation Amount ($)</label>
+                <input 
+                    id="donationamount"
+                    type="number" 
+                    name="donationamount" 
+                    value="<%= donation.donationamount %>"
+                    step="0.01"
+                    required
+                    style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background: var(--white); font-size: 1rem;"
+                >
+            </div>
 
-        <label>Donation Date:</label>
-        <input 
-            type="date" 
-            name="donationdate" 
-            value="<%= donation.donationdate ? donation.donationdate.toISOString().split('T')[0] : '' %>"
-            required
-        >
-
-        <label>Donation Amount ($):</label>
-        <input 
-            type="number" 
-            name="donationamount" 
-            value="<%= donation.donationamount %>"
-            step="0.01"
-            required
-        >
-
-        <button type="submit">Save Changes</button>
-    </form>
-
-    <p style="margin-top: 1rem;">
-        <button onclick="history.back()" class="back-btn">Cancel</button>
-    </p>
-
-</main>
-
-</body>
-</html>
+            <div style="display: flex; gap: 12px; margin-top: 1.5rem;">
+                <a href="/donations" style="flex: 1; text-decoration: none;">
+                    <button type="button" style="width: 100%; padding: 12px; background: #ccc; color: var(--charcoal); border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                        Cancel
+                    </button>
+                </a>
+                <div style="flex: 1;">
+                    <button type="submit" style="width: 100%; padding: 12px; background: var(--rose-deep); color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
