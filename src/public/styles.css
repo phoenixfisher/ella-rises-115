@@ -68,6 +68,26 @@ footer {
     color: #444;
 }
 
+footer p {
+    margin: 0 0 0;
+}
+
+footer .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 2px;
+}
+
+footer .brand-logo {
+    max-width: 110px;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* ================================
    3. NAVBAR
 ================================ */
