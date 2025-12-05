@@ -76,7 +76,7 @@
                             <th>Phone Number</th>
 
                             <% if (user && user.level === 'M') { %>
-                                <th style="text-align: center;" colspan="2">Actions</th>
+                                <th style="text-align: center;">Actions</th>
                             <% } %>
                         </tr>
                     </thead>
@@ -92,20 +92,22 @@
                                 <td style="color: #666; font-family: monospace;">
                                     <%= p.participantphone %>
                                 </td>
-                                <td style="white-space: nowrap;">
-                                    <a href="/displayParticipant/<%= p.participantid %>" class="btn btn-soft btn-sm">
-                                        Details
-                                    </a>
-                                    
-                                    <a href="/editParticipant/<%= p.participantid %>" class="btn btn-soft btn-sm">
-                                        Edit
-                                    </a>
+                                <td style="white-space: nowrap; text-align: right;">
+                                    <div style="display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end;">
+                                        <a href="/displayParticipant/<%= p.participantid %>" class="btn btn-soft btn-sm">
+                                            Details
+                                        </a>
+                                        
+                                        <a href="/editParticipant/<%= p.participantid %>" class="btn btn-soft btn-sm">
+                                            Edit
+                                        </a>
 
-                                    <form action="/deleteParticipant/<%= p.participantid %>" method="post" onsubmit="return confirm('Are you sure you want to delete <%= p.participantfullname %>?');" style="display: inline; margin: 0;">
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            Delete
-                                        </button>
-                                    </form>
+                                        <form action="/deleteParticipant/<%= p.participantid %>" method="post" onsubmit="return confirm('Are you sure you want to delete <%= p.participantfullname %>?');" style="display: inline; margin: 0;">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         <% }) %>

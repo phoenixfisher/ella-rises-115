@@ -136,7 +136,7 @@
                             <th>NPS</th>
 
                             <% if (user && user.level === 'M') { %>
-                                <th style="text-align: center;" colspan="2">Actions</th>
+                                <th style="text-align: center;">Actions</th>
                             <% } %>
                         </tr>
                     </thead>
@@ -188,8 +188,8 @@
                                 </td>
                                 
                                 <% if (userLevel === 'M') { %>
-                                    <td>
-                                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; white-space: nowrap;">
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <div style="display: inline-flex; gap: 10px; align-items: center; justify-content: flex-end;">
                                             <a href="/editSurvey/<%= survey.surveyid %>" style="display: inline-flex; flex: 0 0 auto;">
                                                 <button style="margin: 0; padding: 5px 10px; background-color: var(--blue-soft); font-size: 0.85rem; white-space: nowrap;">Edit</button>
                                             </a>
