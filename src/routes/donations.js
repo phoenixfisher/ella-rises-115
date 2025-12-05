@@ -7,6 +7,8 @@ const router = express.Router();
 // Display Donations
 router.get("/donations", async (req, res) => {
     try {
+        const { search } = req.query;
+
         const donations = await db("donations as d")
             .leftJoin("participants as p", "d.participantid", "p.participantid")
             .select(
@@ -16,11 +18,23 @@ router.get("/donations", async (req, res) => {
                 "d.donationdate",
                 "d.donationamount"
             )
+            .modify((qb) => {
+                if (search) {
+                    const term = `%${search.toLowerCase()}%`;
+                    qb.where(function() {
+                        this.whereRaw("LOWER(p.participantfirstname) LIKE ?", [term])
+                            .orWhereRaw("LOWER(p.participantlastname) LIKE ?", [term])
+                            .orWhereRaw("LOWER(CONCAT(p.participantfirstname, ' ', p.participantlastname)) LIKE ?", [term])
+                            .orWhereRaw("CAST(d.donationamount AS TEXT) LIKE ?", [`%${search}%`]);
+                    });
+                }
+            })
             .orderByRaw("d.donationdate IS NULL ASC, d.donationdate DESC");
 
         res.render("donations/donations", {
             donations,
             user: req.session.user || null,
+            searchTerm: search || ""
         });
     } catch (err) {
         console.error(err);

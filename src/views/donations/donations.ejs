@@ -12,6 +12,27 @@
             <% } %>
         </div>
 
+        <form action="/donations" method="GET" style="margin-bottom: 1.5rem; display: flex; gap: 10px; flex-wrap: wrap;">
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Search donor or amount..." 
+                value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                style="flex: 1; min-width: 240px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;"
+            >
+            <button type="submit" class="btn" style="width: auto; background-color: var(--lavender); color: white; margin-top: 0;">
+                Search
+            </button>
+            
+            <% if (searchTerm) { %>
+                <a href="/donations" style="text-decoration: none;">
+                    <button type="button" class="btn btn-charcoal" style="width: auto; margin-top: 0;">
+                        Clear
+                    </button>
+                </a>
+            <% } %>
+        </form>
+
         <!-- Donations Table -->
         <div style="margin-bottom: 2rem;">
             <% if (!donations || donations.length === 0) { %>
