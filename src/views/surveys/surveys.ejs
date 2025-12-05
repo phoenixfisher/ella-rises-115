@@ -4,11 +4,9 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h2 style="color: var(--charcoal); margin: 0;">Survey Responses</h2>
             
-            <form action="/addSurvey" method="GET" style="margin: 0;">
-                <button type="submit" style="background-color: var(--rose-deep); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
-                    <%= userLevel === 'M' ? 'Add Survey Entry' : 'Leave a Review' %>
-                </button>
-            </form>
+            <a href="/addSurvey" style="text-decoration: none; background: var(--rose-deep); color: white; padding: 10px 18px; border-radius: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 10px;">
+                <%= userLevel === 'M' ? '+ Add Survey Entry' : 'Leave a Review' %>
+            </a>
         </div>
 
         <form action="/surveys" method="GET" style="background-color: #fff; padding: 20px; border-radius: 14px; border: 1px solid var(--pink-light); margin-bottom: 2rem; box-shadow: 0 6px 18px rgba(0,0,0,0.05);">
