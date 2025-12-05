@@ -11,12 +11,50 @@
         <% } %>
     </div>
 
+    <form action="/events" method="GET" style="background-color: #fff; padding: 16px; border-radius: 12px; border: 1px solid var(--pink-light); margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 0;">Search</label>
+            <input type="text" name="search" value="<%= filters && filters.search ? filters.search : '' %>" placeholder="Name, type, location..."
+                   style="width: 100%; padding: 10px 12px; border: 1px solid #dcdde3; border-radius: 8px; box-sizing: border-box; background: #fafbff;">
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+            <div>
+                <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px;">Type</label>
+                <select name="type" style="width: 100%; padding: 10px 12px; border: 1px solid #dcdde3; border-radius: 8px; box-sizing: border-box; background: #fafbff;">
+                    <option value="">All Types</option>
+                    <% eventTypes.forEach(et => { %>
+                        <option value="<%= et.eventtype %>" <%= filters && filters.type === et.eventtype ? 'selected' : '' %>><%= et.eventtype %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px;">Start Date</label>
+                <input type="date" name="start" value="<%= filters && filters.start ? filters.start : '' %>"
+                       style="width: 100%; padding: 10px 12px; border: 1px solid #dcdde3; border-radius: 8px; box-sizing: border-box; background: #fafbff;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px;">End Date</label>
+                <input type="date" name="end" value="<%= filters && filters.end ? filters.end : '' %>"
+                       style="width: 100%; padding: 10px 12px; border: 1px solid #dcdde3; border-radius: 8px; box-sizing: border-box; background: #fafbff;">
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+            <a href="/events" class="btn btn-soft btn-sm" style="margin: 0; text-decoration: none;">Reset Filters</a>
+            <button type="submit" class="btn btn-rose" style="width: auto; margin: 0;">Apply Filters</button>
+        </div>
+    </form>
+
     <div>
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap;">
             <h2 style="color: var(--rose-deep); border-bottom: 2px solid var(--pink-light); padding-bottom: 10px; margin: 0;">Upcoming Events</h2>
             <div class="event-tabs">
                 <button type="button" class="event-tab-button active" disabled>Upcoming</button>
-                <a href="/events/past" class="event-tab-button" style="text-decoration: none; text-align: center;">Past</a>
+                <a href="/events/past<%
+                    const q = new URLSearchParams();
+                    if (filters && filters.search) q.append('search', filters.search);
+                    if (filters && filters.type) q.append('type', filters.type);
+                    const qs = q.toString();
+                %><%= qs ? '?' + qs : '' %>" class="event-tab-button" style="text-decoration: none; text-align: center;">Past</a>
             </div>
         </div>
         
@@ -76,5 +114,4 @@
         <% } %>
     </div>
 
-    </div>
 </div>

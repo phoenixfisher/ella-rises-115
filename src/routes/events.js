@@ -9,6 +9,9 @@ const router = express.Router();
 router.get("/events", async (req, res) => {
     try {
         const now = new Date();
+        const { search, type, start, end } = req.query;
+        const searchTerm = (search || "").trim();
+
         const baseSelect = [
             "events.eventid",
             "events.eventname",
@@ -20,14 +23,42 @@ router.get("/events", async (req, res) => {
             "eventoccurrences.eventlocation",
         ];
 
+        const applyFilters = (builder) => {
+            if (type) {
+                builder.where("events.eventtype", type);
+            }
+            if (searchTerm) {
+                const term = `%${searchTerm.toLowerCase()}%`;
+                builder.where(function() {
+                    this.whereRaw("LOWER(events.eventname) LIKE ?", [term])
+                        .orWhereRaw("LOWER(events.eventdescription) LIKE ?", [term])
+                        .orWhereRaw("LOWER(events.eventtype) LIKE ?", [term])
+                        .orWhereRaw("LOWER(eventoccurrences.eventlocation) LIKE ?", [term]);
+                });
+            }
+            if (start) {
+                builder.where("eventoccurrences.eventdatetimestart", ">=", new Date(start));
+            }
+            if (end) {
+                builder.where("eventoccurrences.eventdatetimestart", "<=", new Date(end));
+            }
+        };
+
         const upcomingEvents = await db("events")
             .join("eventoccurrences", "events.eventid", "=", "eventoccurrences.eventid")
             .where("eventoccurrences.eventdatetimestart", ">=", now)
+            .modify(applyFilters)
             .select(baseSelect)
             .orderBy("eventoccurrences.eventdatetimestart", "asc");
 
+        const eventTypes = await db("events")
+            .distinct("eventtype")
+            .orderBy("eventtype");
+
         res.render("events/events", {
             upcomingEvents,
+            eventTypes,
+            filters: { search: searchTerm, type, start, end },
             user: req.session.user,
         });
     } catch (err) {
@@ -43,6 +74,8 @@ router.get("/events/past", async (req, res) => {
         const pastPage = Math.max(parseInt(req.query.page, 10) || 1, 1);
         const pageSize = 50;
         const offset = (pastPage - 1) * pageSize;
+        const { search, type, start, end } = req.query;
+        const searchTerm = (search || "").trim();
 
         const baseSelect = [
             "events.eventid",
@@ -55,9 +88,31 @@ router.get("/events/past", async (req, res) => {
             "eventoccurrences.eventlocation",
         ];
 
+        const applyFilters = (builder) => {
+            if (type) {
+                builder.where("events.eventtype", type);
+            }
+            if (searchTerm) {
+                const term = `%${searchTerm.toLowerCase()}%`;
+                builder.where(function() {
+                    this.whereRaw("LOWER(events.eventname) LIKE ?", [term])
+                        .orWhereRaw("LOWER(events.eventdescription) LIKE ?", [term])
+                        .orWhereRaw("LOWER(events.eventtype) LIKE ?", [term])
+                        .orWhereRaw("LOWER(eventoccurrences.eventlocation) LIKE ?", [term]);
+                });
+            }
+            if (start) {
+                builder.where("eventoccurrences.eventdatetimestart", ">=", new Date(start));
+            }
+            if (end) {
+                builder.where("eventoccurrences.eventdatetimestart", "<=", new Date(end));
+            }
+        };
+
         const pastBase = db("events")
             .join("eventoccurrences", "events.eventid", "=", "eventoccurrences.eventid")
-            .where("eventoccurrences.eventdatetimestart", "<", now);
+            .where("eventoccurrences.eventdatetimestart", "<", now)
+            .modify(applyFilters);
 
         const [{ count }] = await pastBase.clone().count("* as count");
         const pastEvents = await pastBase
@@ -70,11 +125,17 @@ router.get("/events/past", async (req, res) => {
         const pastTotal = parseInt(count, 10) || 0;
         const pastTotalPages = Math.max(Math.ceil(pastTotal / pageSize), 1);
 
+        const eventTypes = await db("events")
+            .distinct("eventtype")
+            .orderBy("eventtype");
+
         res.render("events/pastEvents", {
             pastEvents,
             pastPage,
             pastTotalPages,
             pastTotal,
+            eventTypes,
+            filters: { search: searchTerm, type, start, end },
             user: req.session.user,
         });
     } catch (err) {
