@@ -10,6 +10,7 @@
                 </button>
             </form>
         </div>
+
         <form action="/surveys" method="GET" style="background-color: #fff; padding: 20px; border-radius: 14px; border: 1px solid var(--pink-light); margin-bottom: 2rem; box-shadow: 0 6px 18px rgba(0,0,0,0.05);">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
                 <div>
@@ -30,7 +31,16 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+                <div style="flex: 1; min-width: 260px;">
+                    <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px;">Search</label>
+                    <input type="text" name="search" value="<%= filters.search || '' %>"
+                           placeholder="Participant, event, NPS, comments..."
+                           style="width: 100%; padding: 10px 12px; border: 1px solid #dcdde3; border-radius: 8px; box-sizing: border-box; background: #fafbff;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; align-items: end;">
                 <div>
                     <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px;">Date</label>
                     <input type="date" name="date" value="<%= filters.date || '' %>" 

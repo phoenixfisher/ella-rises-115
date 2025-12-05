@@ -10,7 +10,8 @@ const router = express.Router();
 router.get("/surveys", requireRole(["M"]), async (req, res) => {
     try {
         // 1. Get filter parameters from URL
-        const { date, event, score, nps } = req.query;
+        const { date, event, score, nps, search } = req.query;
+        const searchTerm = (search || "").trim();
 
         // 2. Start building the main query
         let query = db("surveys")
@@ -43,6 +44,16 @@ router.get("/surveys", requireRole(["M"]), async (req, res) => {
         if (nps) {
             query.where("surveys.surveynpsbucket", nps);
         }
+        if (searchTerm) {
+            const term = `%${searchTerm.toLowerCase()}%`;
+            query.where(function() {
+                this.whereRaw("LOWER(events.eventname) LIKE ?", [term])
+                    .orWhereRaw("LOWER(participants.participantfirstname) LIKE ?", [term])
+                    .orWhereRaw("LOWER(participants.participantlastname) LIKE ?", [term])
+                    .orWhereRaw("LOWER(surveys.surveycomments) LIKE ?", [term])
+                    .orWhereRaw("LOWER(surveys.surveynpsbucket) LIKE ?", [term]);
+            });
+        }
 
         // Execute Survey Query
         const surveys = await query.orderBy("surveys.surveyid", "desc");
@@ -53,7 +64,7 @@ router.get("/surveys", requireRole(["M"]), async (req, res) => {
         res.render("surveys/surveys", {
             surveys,
             eventsList, // Pass list for dropdown
-            filters: req.query, // Pass current filters back to view (to keep inputs filled)
+            filters: { ...req.query, search: searchTerm }, // Pass current filters back to view (to keep inputs filled)
             user: req.session.user,
             userLevel: req.session.user.level
         });
