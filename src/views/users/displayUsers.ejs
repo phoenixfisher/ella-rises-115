@@ -26,11 +26,10 @@
             </div>
         <% } else { %>
             <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                <table style="width: 100%; border-collapse: collapse; min-width: 520px;">
                     <thead>
                         <tr>
                             <th style="text-align: left; padding: 12px; color: var(--rose-deep); border-bottom: 2px solid var(--pink-light);">Username</th>
-                            <th style="text-align: left; padding: 12px; color: var(--rose-deep); border-bottom: 2px solid var(--pink-light);">Password</th> 
                             <th style="text-align: left; padding: 12px; color: var(--rose-deep); border-bottom: 2px solid var(--pink-light);">Level</th>
                             <th style="padding: 12px; border-bottom: 2px solid var(--pink-light);"></th>
                             <th style="padding: 12px; border-bottom: 2px solid var(--pink-light);"></th>
@@ -40,7 +39,6 @@
                         <% for (let iCount = 0; iCount < users.length; iCount++) { %>
                             <tr style="border-bottom: 1px solid #eee;">
                                 <td style="padding: 12px; color: var(--charcoal); vertical-align: bottom;"><%= users[iCount].username %></td>
-                                <td style="padding: 12px; color: #666; font-family: monospace; vertical-align: bottom;"><%= users[iCount].password %></td>
                                 <td style="padding: 12px; vertical-align: bottom;">
                                     <% if (users[iCount].level === 'M') { %>
                                         <span style="display: inline-block; background-color: #ccc; color: var(--charcoal); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">Manager</span>
