@@ -154,6 +154,79 @@ nav img {
     border-bottom-color: var(--rose-deep);
     font-weight: 700;
 }
+
+/* Flash messages */
+.flash-container {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    width: min(960px, calc(100% - 32px));
+    z-index: 2000;
+    padding: 0;
+    margin: 0;
+    pointer-events: none; /* Allow clicks only on flashes */
+}
+
+.flash {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    box-shadow: var(--shadow-light);
+    color: #1f2d3d;
+    background: #f5f7fa;
+    margin-bottom: 10px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: auto;
+}
+
+.flash.success {
+    border-color: #b8e6c4;
+    background: #e9f7ee;
+    color: #1f6135;
+}
+
+.flash.error {
+    border-color: #f2c4c4;
+    background: #fdecea;
+    color: #8b1e1e;
+}
+
+.flash.info {
+    border-color: #c7dcf5;
+    background: #e8f2ff;
+    color: #1f4c8f;
+}
+
+.flash.warning {
+    border-color: #f4d9b2;
+    background: #fff4e2;
+    color: #8a5200;
+}
+
+.flash-content {
+    flex: 1;
+    font-weight: 600;
+}
+
+.flash-close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+}
+
+.flash.fade {
+    opacity: 0;
+    transform: translateY(-4px);
+}
 /* ================================
    4. LANDING PAGE & CONTAINERS
 ================================ */
