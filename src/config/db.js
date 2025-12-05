@@ -3,12 +3,12 @@ const knex = require("knex");
 const db = knex({
     client: "pg",
     connection: {
-        host: process.env.PG_HOST,
-        user: process.env.PG_USER,
-        password: process.env.PG_PASSWORD,
-        database: process.env.PG_DATABASE,
-        port: process.env.PG_PORT,
-        ssl: { rejectUnauthorized: false },
+        host: process.env.RDS_HOST,
+        user: process.env.RDS_USER,
+        password: process.env.RDS_PASSWORD,
+        database: process.env.RDS_DATABASE,
+        port: process.env.RDS_PORT,
+        ssl: process.env.RDS_SSL === "true" ? { rejectUnauthorized: false } : false,
     },
 });
 
