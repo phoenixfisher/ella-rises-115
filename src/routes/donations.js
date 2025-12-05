@@ -8,9 +8,31 @@ const router = express.Router();
 router.get("/donations", async (req, res) => {
     try {
         const { search } = req.query;
+        const searchTerm = (search || "").trim();
+        const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+        const pageSize = 50;
+        const offset = (page - 1) * pageSize;
 
-        const donations = await db("donations as d")
+        const applySearch = (qb) => {
+            if (searchTerm) {
+                const term = `%${searchTerm.toLowerCase()}%`;
+                qb.where(function() {
+                    this.whereRaw("LOWER(p.participantfirstname) LIKE ?", [term])
+                        .orWhereRaw("LOWER(p.participantlastname) LIKE ?", [term])
+                        .orWhereRaw("LOWER(CONCAT(p.participantfirstname, ' ', p.participantlastname)) LIKE ?", [term])
+                        .orWhereRaw("CAST(d.donationamount AS TEXT) LIKE ?", [`%${searchTerm}%`]);
+                });
+            }
+        };
+
+        const base = db("donations as d")
             .leftJoin("participants as p", "d.participantid", "p.participantid")
+            .modify(applySearch);
+
+        const [{ count }] = await base.clone().count("* as count");
+
+        const donations = await base
+            .clone()
             .select(
                 "d.donationid",
                 "p.participantfirstname",
@@ -18,23 +40,20 @@ router.get("/donations", async (req, res) => {
                 "d.donationdate",
                 "d.donationamount"
             )
-            .modify((qb) => {
-                if (search) {
-                    const term = `%${search.toLowerCase()}%`;
-                    qb.where(function() {
-                        this.whereRaw("LOWER(p.participantfirstname) LIKE ?", [term])
-                            .orWhereRaw("LOWER(p.participantlastname) LIKE ?", [term])
-                            .orWhereRaw("LOWER(CONCAT(p.participantfirstname, ' ', p.participantlastname)) LIKE ?", [term])
-                            .orWhereRaw("CAST(d.donationamount AS TEXT) LIKE ?", [`%${search}%`]);
-                    });
-                }
-            })
-            .orderByRaw("d.donationdate IS NULL ASC, d.donationdate DESC");
+            .orderByRaw("d.donationdate IS NULL ASC, d.donationdate DESC")
+            .limit(pageSize)
+            .offset(offset);
+
+        const total = parseInt(count, 10) || 0;
+        const totalPages = Math.max(Math.ceil(total / pageSize), 1);
 
         res.render("donations/donations", {
             donations,
             user: req.session.user || null,
-            searchTerm: search || ""
+            searchTerm,
+            page,
+            totalPages,
+            total
         });
     } catch (err) {
         console.error(err);

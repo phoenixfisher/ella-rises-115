@@ -9,15 +9,47 @@ const router = express.Router();
 // ==============================================
 router.get("/surveys", requireRole(["M"]), async (req, res) => {
     try {
-        // 1. Get filter parameters from URL
         const { date, event, score, nps, search } = req.query;
         const searchTerm = (search || "").trim();
+        const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+        const pageSize = 50;
+        const offset = (page - 1) * pageSize;
 
-        // 2. Start building the main query
-        let query = db("surveys")
+        const applyFilters = (builder) => {
+            if (date) {
+                builder.whereRaw("DATE(eventoccurrences.eventdatetimestart) = ?", [date]);
+            }
+            if (event) {
+                builder.where("events.eventid", event);
+            }
+            if (score) {
+                builder.where("surveys.surveyoverallscore", ">=", score);
+            }
+            if (nps) {
+                builder.where("surveys.surveynpsbucket", nps);
+            }
+            if (searchTerm) {
+                const term = `%${searchTerm.toLowerCase()}%`;
+                builder.where(function() {
+                    this.whereRaw("LOWER(events.eventname) LIKE ?", [term])
+                        .orWhereRaw("LOWER(participants.participantfirstname) LIKE ?", [term])
+                        .orWhereRaw("LOWER(participants.participantlastname) LIKE ?", [term])
+                        .orWhereRaw("LOWER(surveys.surveycomments) LIKE ?", [term])
+                        .orWhereRaw("LOWER(surveys.surveynpsbucket) LIKE ?", [term]);
+                });
+            }
+        };
+
+        const baseQuery = db("surveys")
             .join("participants", "surveys.participantid", "participants.participantid")
             .join("eventoccurrences", "surveys.eventoccurrenceid", "eventoccurrences.eventoccurrenceid")
-            .join("events", "eventoccurrences.eventid", "events.eventid")
+            .join("events", "eventoccurrences.eventid", "events.eventid");
+
+        const [{ count }] = await baseQuery.clone().modify(applyFilters).count("* as count");
+
+        const surveys = await baseQuery
+            .clone()
+            .modify(applyFilters)
             .select(
                 "surveys.surveyid",
                 "surveys.surveyoverallscore",
@@ -27,46 +59,25 @@ router.get("/surveys", requireRole(["M"]), async (req, res) => {
                 "events.eventname",
                 "events.eventid",
                 "eventoccurrences.eventdatetimestart"
-            );
+            )
+            .orderBy("surveys.surveyid", "desc")
+            .limit(pageSize)
+            .offset(offset);
 
-        // 3. Apply Filters if they exist
-        if (date) {
-            // Compare just the YYYY-MM-DD part
-            query.whereRaw("DATE(eventoccurrences.eventdatetimestart) = ?", [date]);
-        }
-        if (event) {
-            query.where("events.eventid", event);
-        }
-        if (score) {
-            // Filter for scores greater than or equal to the selection
-            query.where("surveys.surveyoverallscore", ">=", score);
-        }
-        if (nps) {
-            query.where("surveys.surveynpsbucket", nps);
-        }
-        if (searchTerm) {
-            const term = `%${searchTerm.toLowerCase()}%`;
-            query.where(function() {
-                this.whereRaw("LOWER(events.eventname) LIKE ?", [term])
-                    .orWhereRaw("LOWER(participants.participantfirstname) LIKE ?", [term])
-                    .orWhereRaw("LOWER(participants.participantlastname) LIKE ?", [term])
-                    .orWhereRaw("LOWER(surveys.surveycomments) LIKE ?", [term])
-                    .orWhereRaw("LOWER(surveys.surveynpsbucket) LIKE ?", [term]);
-            });
-        }
+        const total = parseInt(count, 10) || 0;
+        const totalPages = Math.max(Math.ceil(total / pageSize), 1);
 
-        // Execute Survey Query
-        const surveys = await query.orderBy("surveys.surveyid", "desc");
-
-        // 4. Fetch Events List for the Filter Dropdown
         const eventsList = await db("events").select("eventid", "eventname").orderBy("eventname");
 
         res.render("surveys/surveys", {
             surveys,
-            eventsList, // Pass list for dropdown
-            filters: { ...req.query, search: searchTerm }, // Pass current filters back to view (to keep inputs filled)
+            eventsList,
+            filters: { ...req.query, search: searchTerm },
             user: req.session.user,
-            userLevel: req.session.user.level
+            userLevel: req.session.user.level,
+            page,
+            totalPages,
+            total
         });
     } catch (err) {
         console.error("Error fetching surveys:", err);

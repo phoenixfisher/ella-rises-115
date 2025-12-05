@@ -6,48 +6,62 @@ const { requireRole } = require("../middleware/auth");
 const router = express.Router();
 
 // Route for viewing all participants with search functionality
-router.get("/participants", requireRole(["M"]), (req, res) => {
-    // 1. Get the search term from the URL query string (defaults to empty string)
-    const searchTerm = req.query.search || "";
+router.get("/participants", requireRole(["M"]), async (req, res) => {
+    const searchTerm = (req.query.search || "").trim();
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const pageSize = 50;
+    const offset = (page - 1) * pageSize;
 
-    // 2. Start the base query
-    let query = db.select(
-        "participantid",
-        "participantemail",
-        db.raw("participantfirstname || ' ' || participantlastname as participantfullname"),
-        "participantphone"
-    ).from("participants");
+    const applySearch = (builder) => {
+        if (searchTerm) {
+            builder.where((qb) => {
+                qb.where("participantfirstname", "ilike", `%${searchTerm}%`)
+                  .orWhere("participantlastname", "ilike", `%${searchTerm}%`)
+                  .orWhere("participantemail", "ilike", `%${searchTerm}%`)
+                  .orWhere("participantphone", "ilike", `%${searchTerm}%`);
+            });
+        }
+    };
 
-    // 3. If a search term exists, add the filter logic
-    if (searchTerm) {
-        query = query.where((builder) => {
-            builder.where("participantfirstname", "ilike", `%${searchTerm}%`)
-                   .orWhere("participantlastname", "ilike", `%${searchTerm}%`)
-                   .orWhere("participantemail", "ilike", `%${searchTerm}%`)
-                   .orWhere("participantphone", "ilike", `%${searchTerm}%`);
+    try {
+        const baseQuery = db("participants").modify(applySearch);
+
+        const [{ count }] = await baseQuery.clone().count("* as count");
+
+        const participants = await baseQuery
+            .clone()
+            .select(
+                "participantid",
+                "participantemail",
+                db.raw("participantfirstname || ' ' || participantlastname as participantfullname"),
+                "participantphone"
+            )
+            .orderBy("participantlastname")
+            .limit(pageSize)
+            .offset(offset);
+
+        const total = parseInt(count, 10) || 0;
+        const totalPages = Math.max(Math.ceil(total / pageSize), 1);
+
+        res.render("participants/participants", {
+            participants,
+            userLevel: req.session.user.level,
+            user: req.session.user,
+            searchTerm,
+            page,
+            totalPages,
+            total
+        });
+    } catch (err) {
+        console.error("Database query error:", err.message);
+        res.render("participants/participants", {
+            participants: [],
+            userLevel: req.session.user ? req.session.user.level : null,
+            user: req.session.user,
+            error_message: `Database error: ${err.message}`,
+            searchTerm
         });
     }
-
-    // 4. Execute query and render
-    query.then((participants) => {
-            console.log(`Successfully retrieved ${participants.length} participants`);
-            res.render("participants/participants", {
-                participants: participants,
-                userLevel: req.session.user.level,
-                user: req.session.user,
-                searchTerm: searchTerm // Pass this back to the view to keep the input filled
-            });
-        })
-        .catch((err) => {
-            console.error("Database query error:", err.message);
-            res.render("participants/participants", {
-                participants: [],
-                userLevel: req.session.user ? req.session.user.level : null,
-                user: req.session.user,
-                error_message: `Database error: ${err.message}`,
-                searchTerm: searchTerm
-            });
-        });
 });
 
 // Route to view the full info for a specific participant (read-only)

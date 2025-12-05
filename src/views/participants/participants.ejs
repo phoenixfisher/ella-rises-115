@@ -13,7 +13,7 @@
             <% } %>
         </div>
 
-        <form action="/participants" method="GET" style="margin-bottom: 2rem; display: flex; gap: 10px;">
+        <form action="/participants" method="GET" style="margin-bottom: 1.5rem; display: flex; gap: 10px; flex-wrap: wrap;">
             <input 
                 type="text" 
                 name="search" 
@@ -21,6 +21,7 @@
                 value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
                 style="flex: 1; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;"
             >
+            <input type="hidden" name="page" value="1">
             <button type="submit" class="btn" style="width: auto; background-color: var(--lavender); color: white; margin-top: 0;">
                 Search
             </button>
@@ -33,6 +34,27 @@
                 </a>
             <% } %>
         </form>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap;">
+            <% const prevPageTop = Math.max((typeof page !== 'undefined' ? page : 1) - 1, 1); %>
+            <% const nextPageTop = Math.min((typeof page !== 'undefined' ? page : 1) + 1, (typeof totalPages !== 'undefined' ? totalPages : 1)); %>
+
+            <div>
+                <a href="/participants?<%= searchTerm ? 'search=' + encodeURIComponent(searchTerm) + '&' : '' %>page=<%= prevPageTop %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (page <= 1) ? 'disabled' : '' %>>← Prev</button>
+                </a>
+            </div>
+
+            <span style="font-weight: 600; color: var(--charcoal); font-size: 0.95rem;">
+                Page <%= page || 1 %> of <%= totalPages || 1 %>
+            </span>
+
+            <div>
+                <a href="/participants?<%= searchTerm ? 'search=' + encodeURIComponent(searchTerm) + '&' : '' %>page=<%= nextPageTop %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (page >= totalPages) ? 'disabled' : '' %>>Next →</button>
+                </a>
+            </div>
+        </div>
 
         <% if (typeof error_message !== 'undefined' && error_message) { %>
             <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
@@ -52,7 +74,10 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone Number</th>
-                            <th>Actions</th>
+
+                            <% if (user && user.level === 'M') { %>
+                                <th style="text-align: center;" colspan="2">Actions</th>
+                            <% } %>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,9 +114,34 @@
             </div>
         <% } %>
 
-        <div style="margin-top: 2rem; border-top: 2px solid var(--pink-light); padding-top: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 1.5rem; flex-wrap: wrap;">
+            <% const prevPage = Math.max((typeof page !== 'undefined' ? page : 1) - 1, 1); %>
+            <% const nextPage = Math.min((typeof page !== 'undefined' ? page : 1) + 1, (typeof totalPages !== 'undefined' ? totalPages : 1)); %>
+            <div>
+                <a href="/participants?<%= searchTerm ? 'search=' + encodeURIComponent(searchTerm) + '&' : '' %>page=<%= prevPage %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (page <= 1) ? 'disabled' : '' %>>← Prev</button>
+                </a>
+            </div>
+            <span style="font-weight: 600; color: var(--charcoal); font-size: 0.95rem;">
+                Page <%= page || 1 %> of <%= totalPages || 1 %>
+            </span>
+            <div>
+                <a href="/participants?<%= searchTerm ? 'search=' + encodeURIComponent(searchTerm) + '&' : '' %>page=<%= nextPage %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (page >= totalPages) ? 'disabled' : '' %>>Next →</button>
+                </a>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 0.9rem; color: #666; margin-top: 0.25rem; flex-wrap: wrap;">
+            <span>Showing up to 50 per page</span>
+            <span>Total results: <%= typeof total !== 'undefined' ? total : '' %></span>
+        </div>
+
+        <div style="margin-top: 1rem; border-top: 2px solid var(--pink-light); padding-top: 12px;">
             <a href="/" style="text-decoration: none;">
-                <button type="button" class="btn btn-charcoal">Back to Landing Page</button>
+                <button type="button" style="background-color: #6c757d; color: white; padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                    Back to Home
+                </button>
             </a>
         </div>
     </div>

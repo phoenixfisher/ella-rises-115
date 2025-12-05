@@ -12,6 +12,7 @@
         </div>
 
         <form action="/surveys" method="GET" style="background-color: #fff; padding: 20px; border-radius: 14px; border: 1px solid var(--pink-light); margin-bottom: 2rem; box-shadow: 0 6px 18px rgba(0,0,0,0.05);">
+            <input type="hidden" name="page" value="1">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
                 <div>
                     <h4 style="margin: 0; color: var(--rose-deep); font-size: 1.1rem;">Filter Responses</h4>
@@ -82,6 +83,43 @@
             </div>
         </form>
 
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap;">
+            <% const prevPageTop = Math.max((typeof page !== 'undefined' ? page : 1) - 1, 1); %>
+            <% const nextPageTop = Math.min((typeof page !== 'undefined' ? page : 1) + 1, (typeof totalPages !== 'undefined' ? totalPages : 1)); %>
+
+            <div>
+                <a href="/surveys?<%
+                    const pTop1 = new URLSearchParams();
+                    if (filters.search) pTop1.append('search', filters.search);
+                    if (filters.date) pTop1.append('date', filters.date);
+                    if (filters.event) pTop1.append('event', filters.event);
+                    if (filters.score) pTop1.append('score', filters.score);
+                    if (filters.nps) pTop1.append('nps', filters.nps);
+                    pTop1.append('page', prevPageTop);
+                    %><%= pTop1.toString() %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (page <= 1) ? 'disabled' : '' %>>← Prev</button>
+                </a>
+            </div>
+
+            <span style="font-weight: 600; color: var(--charcoal); font-size: 0.95rem;">
+                Page <%= page || 1 %> of <%= totalPages || 1 %>
+            </span>
+
+            <div>
+                <a href="/surveys?<%
+                    const pTop2 = new URLSearchParams();
+                    if (filters.search) pTop2.append('search', filters.search);
+                    if (filters.date) pTop2.append('date', filters.date);
+                    if (filters.event) pTop2.append('event', filters.event);
+                    if (filters.score) pTop2.append('score', filters.score);
+                    if (filters.nps) pTop2.append('nps', filters.nps);
+                    pTop2.append('page', nextPageTop);
+                    %><%= pTop2.toString() %>" style="text-decoration: none;">
+                    <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (page >= totalPages) ? 'disabled' : '' %>>Next →</button>
+                </a>
+            </div>
+        </div>
+
         <% if (surveys.length === 0) { %>
             <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba;">
                 No survey responses found.
@@ -96,8 +134,9 @@
                             <th>Participant</th>
                             <th>Overall</th>
                             <th>NPS</th>
-                            <% if (userLevel === 'M') { %>
-                                <th>Actions</th>
+
+                            <% if (user && user.level === 'M') { %>
+                                <th style="text-align: center;" colspan="2">Actions</th>
                             <% } %>
                         </tr>
                     </thead>
@@ -165,9 +204,48 @@
                     </tbody>
                 </table>
             </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 1rem; flex-wrap: wrap;">
+                <% const prevPage = Math.max((typeof page !== 'undefined' ? page : 1) - 1, 1); %>
+                <% const nextPage = Math.min((typeof page !== 'undefined' ? page : 1) + 1, (typeof totalPages !== 'undefined' ? totalPages : 1)); %>
+                <div>
+                    <a href="/surveys?<%
+                        const params = new URLSearchParams();
+                        if (filters.search) params.append('search', filters.search);
+                        if (filters.date) params.append('date', filters.date);
+                        if (filters.event) params.append('event', filters.event);
+                        if (filters.score) params.append('score', filters.score);
+                        if (filters.nps) params.append('nps', filters.nps);
+                        params.append('page', prevPage);
+                        %><%= params.toString() %>" style="text-decoration: none;">
+                        <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (page <= 1) ? 'disabled' : '' %>>← Prev</button>
+                    </a>
+                </div>
+                <span style="font-weight: 600; color: var(--charcoal); font-size: 0.95rem;">
+                    Page <%= page || 1 %> of <%= totalPages || 1 %>
+                </span>
+                <div>
+                    <a href="/surveys?<%
+                        const params2 = new URLSearchParams();
+                        if (filters.search) params2.append('search', filters.search);
+                        if (filters.date) params2.append('date', filters.date);
+                        if (filters.event) params2.append('event', filters.event);
+                        if (filters.score) params2.append('score', filters.score);
+                        if (filters.nps) params2.append('nps', filters.nps);
+                        params2.append('page', nextPage);
+                        %><%= params2.toString() %>" style="text-decoration: none;">
+                        <button type="button" class="btn btn-soft btn-sm" style="margin: 0;" <%= (page >= totalPages) ? 'disabled' : '' %>>Next →</button>
+                    </a>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 0.9rem; color: #666; margin-top: 0.25rem; flex-wrap: wrap;">
+                <span>Showing up to 50 per page</span>
+                <span>Total results: <%= typeof total !== 'undefined' ? total : '' %></span>
+            </div>
         <% } %>
 
-        <div style="margin-top: 2rem; border-top: 2px solid var(--pink-light); padding-top: 1rem;">
+        <div style="margin-top: 1rem; border-top: 2px solid var(--pink-light); padding-top: 1rem;">
             <a href="/" style="text-decoration: none;">
                 <button type="button" style="background-color: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">Back to Home</button>
             </a>
