@@ -7,12 +7,44 @@
             
             <% if (userLevel === 'M') { %>
                 <form action="/addUser" method="GET" style="margin: 0;">
-                    <button type="submit" style="background-color: var(--rose-deep); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                    <button type="submit" class="btn btn-rose">
                         Add User
                     </button>
                 </form>
             <% } %>
         </div>
+
+        <form action="/users" method="GET" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Search username or level..." 
+                value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                style="flex: 2; min-width: 200px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; font-size: 1rem;"
+            >
+
+            <select name="sortBy" style="flex: 1; min-width: 140px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background-color: white; font-family: 'Montserrat', sans-serif;">
+                <option value="username" <%= typeof sortBy !== 'undefined' && sortBy === 'username' ? 'selected' : '' %>>Username</option>
+                <option value="level" <%= typeof sortBy !== 'undefined' && sortBy === 'level' ? 'selected' : '' %>>Access Level</option>
+            </select>
+
+            <select name="sortOrder" style="flex: 1; min-width: 100px; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px; background-color: white; font-family: 'Montserrat', sans-serif;">
+                <option value="asc" <%= typeof sortOrder !== 'undefined' && sortOrder === 'asc' ? 'selected' : '' %>>A - Z</option>
+                <option value="desc" <%= typeof sortOrder !== 'undefined' && sortOrder === 'desc' ? 'selected' : '' %>>Z - A</option>
+            </select>
+
+            <button type="submit" class="btn" style="width: auto; background-color: var(--lavender); color: white; margin-top: 0; border: none;">
+                Go
+            </button>
+            
+            <% if ((typeof searchTerm !== 'undefined' && searchTerm) || (typeof sortBy !== 'undefined' && sortBy !== 'username') || (typeof sortOrder !== 'undefined' && sortOrder !== 'asc')) { %>
+                <a href="/users" style="text-decoration: none;">
+                    <button type="button" class="btn btn-charcoal" style="width: auto; margin-top: 0;">
+                        Reset
+                    </button>
+                </a>
+            <% } %>
+        </form>
 
         <% if (typeof error_message !== 'undefined' && error_message) { %>
             <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
@@ -38,22 +70,24 @@
                     <tbody>
                         <% for (let iCount = 0; iCount < users.length; iCount++) { %>
                             <tr style="border-bottom: 1px solid #eee;">
-                                <td style="padding: 12px; color: var(--charcoal); vertical-align: bottom;"><%= users[iCount].username %></td>
-                                <td style="padding: 12px; vertical-align: bottom;">
+                                <td style="padding: 12px; color: var(--charcoal); vertical-align: middle;"><%= users[iCount].username %></td>
+                                <td style="padding: 12px; vertical-align: middle;">
                                     <% if (users[iCount].level === 'M') { %>
                                         <span style="display: inline-block; background-color: #ccc; color: var(--charcoal); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">Manager</span>
                                     <% } else { %>
                                         <span style="display: inline-block; background-color: #eee; color: #555; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">User</span>
                                     <% } %>
                                 </td>
-                                <td style="padding: 12px; text-align: right; vertical-align: bottom;">
-                                    <!-- Changed to 'a' tag for better alignment control. Visual style matches button. -->
-                                    <a href="/editUser/<%= users[iCount].id %>" style="display: inline-block; text-decoration: none; padding: 6px 12px; background-color: var(--pink-light); color: var(--rose-deep); border: none; border-radius: 4px; font-size: 0.9rem; font-weight: 600; vertical-align: bottom;">Edit</a>
-                                </td>
-                                <td style="padding: 12px; text-align: right; vertical-align: bottom;">
-                                    <!-- Added margin:0 and inline-block to form to prevent layout shifts -->
-                                    <form action="/deleteUser/<%= users[iCount].id %>" method="post" onsubmit="return confirm('Are you sure you want to delete <%= users[iCount].username %>?');" style="display: inline-block; margin: 0;">
-                                        <button type="submit" style="padding: 6px 12px; background-color: #dc3545; color: white; border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; vertical-align: bottom;">Delete</button>
+                                
+                                <td style="padding: 12px; text-align: right; vertical-align: middle; white-space: nowrap;">
+                                    <a href="/editUser/<%= users[iCount].id %>" class="btn btn-soft btn-sm">
+                                        Edit
+                                    </a>
+                                    
+                                    <form action="/deleteUser/<%= users[iCount].id %>" method="post" onsubmit="return confirm('Are you sure you want to delete <%= users[iCount].username %>?');" style="display: inline; margin: 0;">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            Delete
+                                        </button>
                                     </form>
                                 </td>
                             </tr>

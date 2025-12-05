@@ -6,23 +6,57 @@ const { requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
-// Route for viewing all users
+// Route for viewing all users with Search and Sort
 router.get("/users", requireRole(["M"]), (req, res) => {
-    db.select("username", "password", "level", "id")
-        .from("users")
-        .then((users) => {
-            console.log(`Successfully retrieved ${users.length} users from database`);
+    // 1. Get Parameters
+    const searchTerm = req.query.search || "";
+    const sortBy = req.query.sortBy || "username"; // Default: Username
+    const sortOrder = req.query.sortOrder || "asc"; // Default: A-Z
+
+    // 2. Start Base Query
+    let query = db("users").select("username", "password", "level", "id");
+
+    // 3. Apply Search Filter
+    if (searchTerm) {
+        query = query.where((builder) => {
+            builder.where("username", "ilike", `%${searchTerm}%`)
+                   // Also search by 'level' (e.g. search "Manager" finds 'M')
+                   .orWhere("level", "ilike", `%${searchTerm === 'Manager' ? 'M' : (searchTerm === 'User' ? 'U' : searchTerm)}%`);
+        });
+    }
+
+    // 4. Apply Sorting
+    const sortMap = {
+        "username": "username",
+        "level": "level"
+    };
+    const dbColumn = sortMap[sortBy] || "username";
+    
+    query = query.orderBy(dbColumn, sortOrder);
+
+    // 5. Execute
+    query.then((users) => {
+            console.log(`Successfully retrieved ${users.length} users`);
             res.render("users/displayUsers", {
                 users: users,
                 userLevel: req.session.user.level,
                 user: req.session.user,
+                // Pass params back to view
+                searchTerm: searchTerm,
+                sortBy: sortBy,
+                sortOrder: sortOrder
             });
         })
         .catch((err) => {
             console.error("Database query error:", err.message);
             res.render("users/displayUsers", {
                 users: [],
+                userLevel: req.session.user ? req.session.user.level : null,
+                user: req.session.user,
                 error_message: `Database error: ${err.message}`,
+                searchTerm: searchTerm,
+                sortBy: sortBy,
+                sortOrder: sortOrder
             });
         });
 });
