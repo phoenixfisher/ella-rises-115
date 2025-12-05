@@ -1,6 +1,6 @@
 const express = require("express");
 const db = require("../config/db");
-const { requireRole } = require("../middleware/auth");
+const { requireAuth, requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -89,8 +89,8 @@ router.get("/surveys", requireRole(["M"]), async (req, res) => {
 // 2. CREATE: Add Survey
 // ==============================================
 
-// Display the Add Survey Form (Public Access)
-router.get("/addSurvey", async (req, res) => {
+// Display the Add Survey Form (Authenticated Access)
+router.get("/addSurvey", requireAuth, async (req, res) => {
     try {
         // Fetch dropdown data
         const participants = await db("participants")
@@ -119,8 +119,8 @@ router.get("/addSurvey", async (req, res) => {
     }
 });
 
-// Handle the Add Survey POST (Public Access)
-router.post("/addSurvey", async (req, res) => {
+// Handle the Add Survey POST (Authenticated Access)
+router.post("/addSurvey", requireAuth, async (req, res) => {
     const { 
         participantid, 
         eventoccurrenceid, 
