@@ -67,7 +67,9 @@
                 <p style="margin: 0; opacity: 0.9;">We believe that broadening a young woman’s vision of what is possible empowers her to rise.</p>
             </div>
             <div class="hero-actions" style="margin: 0;">
-                <a class="btn btn-charcoal" href="/create-account">Create account</a>
+                <% if (!user) { %>
+                    <a class="btn btn-charcoal" href="/create-account">Create account</a>
+                <% } %>
                 <a class="btn" style="background-color: rgba(255,255,255,0.2); color: white;" href="/dashboard">View impact</a>
             </div>
         </section>

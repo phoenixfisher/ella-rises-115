@@ -54,10 +54,14 @@
                 ]; %>
 
                 <% categories.forEach(cat => { %>
-                    <div>
-                        <label for="<%= cat.id %>" style="display: block; margin-bottom: 0.5rem; font-weight: 500;"><%= cat.label %></label>
+                    <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+                        
+                        <label for="<%= cat.id %>" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                            <%= cat.label %>
+                        </label>
+                        
                         <input type="number" id="<%= cat.id %>" name="<%= cat.id %>" min="1" max="5" required 
-                               style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
+                            style="width: 100%; padding: 10px; border: 2px solid var(--pink-light); border-radius: 8px;">
                     </div>
                 <% }) %>
             </div>
