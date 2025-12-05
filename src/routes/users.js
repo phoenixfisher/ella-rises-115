@@ -33,10 +33,14 @@ router.get("/addUser", requireRole(["M"]), (req, res) => {
 });
 
 router.post("/addUser", requireRole(["M"]), async (req, res) => {
-    const { username, password, level } = req.body;
+    const { username, password, confirmPassword, level } = req.body;
 
     if (!username || !password) {
         req.flash("error", "Username and password are required.");
+        return res.redirect("/addUser");
+    }
+    if (password !== confirmPassword) {
+        req.flash("error", "Passwords do not match.");
         return res.redirect("/addUser");
     }
 
@@ -107,7 +111,7 @@ router.get("/editUser/:id", requireRole(["M"]), (req, res) => {
 // Handle form submission for editing a user
 router.post("/editUser/:id", requireRole(["M"]), async (req, res) => {
     const id = req.params.id;
-    const { username, password, level } = req.body;
+    const { username, password, confirmPassword, level } = req.body;
 
     if (!username) {
         try {
@@ -139,6 +143,10 @@ router.post("/editUser/:id", requireRole(["M"]), async (req, res) => {
     };
 
     if (password && password.trim() !== "") {
+        if (password !== confirmPassword) {
+            req.flash("error", "Passwords do not match.");
+            return res.redirect(`/editUser/${id}`);
+        }
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         updatedUser.password = hashedPassword;
